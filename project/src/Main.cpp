@@ -6,24 +6,9 @@
 #include <string>
 #include <sstream>
 
-// Macro to add break point if error has been encountered
-#define ASSERT(x) if ((!x)) __debugbreak();
-#define GLCall(x) GLClearError();\
-    x;\
-    ASSERT(GLLogCall(#x, __FILE__, __LINE__))
-
-// Error checking functions
-static void GLClearError() {
-    while (glGetError() != GL_NO_ERROR);
-}
-static bool GLLogCall(const char* function, const char* file, int line) {
-    while (GLenum error = glGetError()) {
-        std::cout << "[OpenGL Error] (" << error << "): " << function << 
-            "\n" << file << " : Line " << line << std::endl;
-        return false;
-    }
-    return true;
-}
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
 
 #pragma region Shader related functions
 struct ShaderProgramSource {
@@ -125,87 +110,81 @@ int main(void) {
         std::cout << "GLEW set up correctly" << std::endl;
 
     std::cout << glGetString(GL_VERSION) << std::endl;
+    {
+        // Assigning vertex data
+        float positions[] = {
+            -0.5f, -0.5f,
+             0.5f, -0.5f,
+             0.5f,  0.5f,
+            -0.5f,  0.5f,
+        };
 
-    // Assigning vertex data
-    float positions[] = {
-        -0.5f, -0.5f,
-         0.5f, -0.5f,
-         0.5f,  0.5f,
-        -0.5f,  0.5f,
-    };
+        // Index buffering
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
 
-    // Index buffering
-    unsigned int indices[] = {
-        0, 1, 2,
-        2, 3, 0
-    };
-
-    // Creating a vertex array and binding it
-    unsigned int vao;
-    GLCall(glGenVertexArrays(1, &vao));
-    GLCall(glBindVertexArray(vao));
-
-    // Creating a buffer, binding it, and giving it our vertex position data
-    unsigned int buffer;
-    GLCall(glGenBuffers(1, &buffer));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
-    GLCall(glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW));
-
-    // Vertex attribute enabling and binding the attributes to our buffer data at 0
-    GLCall(glEnableVertexAttribArray(0));
-    GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
-
-    unsigned int ibo;
-    GLCall(glGenBuffers(1, &ibo));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
-    GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW));
-
-    // Binding the basic shader program
-    ShaderProgramSource source = ParseShader("src/shaders/Basic.shader");
-    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-    GLCall(glUseProgram(shader));
-
-    // Getting the location of the uniform value and checking if it's found
-    GLCall(int location = glGetUniformLocation(shader, "u_Color"));
-    ASSERT(location == -1);
-
-    // Unbinding the stuff for testing
-    GLCall(glBindVertexArray(0));
-    GLCall(glUseProgram(0));
-    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
-
-    float r = 0.0f;
-    float increment = 0.05f;
-
-    /* Loop until the user closes the window */
-    while (!glfwWindowShouldClose(window)) {
-        /* Render here */
-        GLCall(glClear(GL_COLOR_BUFFER_BIT));
-
-        GLCall(glUseProgram(shader));
-        GLCall(glUniform4f(location, r, 0.5f, 0.2f, 1.f));
-
+        // Creating a vertex array and binding it
+        unsigned int vao;
+        GLCall(glGenVertexArrays(1, &vao));
         GLCall(glBindVertexArray(vao));
-        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo));
 
-        GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
 
-        if (r > 1.0f)
-            increment = -0.05f;
-        else if (r < 0.0f)
-            increment = 0.05f;
+        // Vertex attribute enabling and binding the attributes to our buffer data at 0
+        GLCall(glEnableVertexAttribArray(0));
+        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0));
 
-        r += increment;
+        IndexBuffer ib(indices, 6);
 
-        /* Swap front and back buffers */
-        GLCall(glfwSwapBuffers(window));
+        // Binding the basic shader program
+        ShaderProgramSource source = ParseShader("src/shaders/Basic.shader");
+        unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
+        GLCall(glUseProgram(shader));
 
-        /* Poll for and process events */
-        GLCall(glfwPollEvents());
+        // Getting the location of the uniform value and checking if it's found
+        GLCall(int location = glGetUniformLocation(shader, "u_Color"));
+        ASSERT(location == -1);
+
+        // Unbinding the stuff for testing
+        GLCall(glBindVertexArray(0));
+        GLCall(glUseProgram(0));
+        GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
+        float r = 0.0f;
+        float increment = 0.05f;
+
+        /* Loop until the user closes the window */
+        while (!glfwWindowShouldClose(window)) {
+            /* Render here */
+            GLCall(glClear(GL_COLOR_BUFFER_BIT));
+
+            GLCall(glUseProgram(shader));
+            GLCall(glUniform4f(location, r, 0.5f, 0.2f, 1.f));
+
+            GLCall(glBindVertexArray(vao));
+            ib.Bind();
+
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+            if (r > 1.0f)
+                increment = -0.05f;
+            else if (r < 0.0f)
+                increment = 0.05f;
+
+            r += increment;
+
+            /* Swap front and back buffers */
+            GLCall(glfwSwapBuffers(window));
+
+            /* Poll for and process events */
+            GLCall(glfwPollEvents());
+        }
+
+        glDeleteProgram(shader);
     }
-
-    glDeleteProgram(shader);
 
     glfwTerminate();
     return 0;
