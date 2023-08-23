@@ -36,6 +36,7 @@ target_link_libraries(2DCharacterController OpenGL::GL glfw)
 include_directories("src")
 include_directories("dependencies/include")
 include_directories("dependencies/glfw-3.3.8/include")
+include_directories("dependencies/glm-0.9.9.8")
 
 # Set 2DCharacterController as startup project
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT 2DCharacterController)

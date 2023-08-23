@@ -7,6 +7,7 @@
 #include <sstream>
 
 #include "Renderer.h"
+#include "Camera.h"
 
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
@@ -27,7 +28,7 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "2D Character Controller", NULL, NULL);
+    window = glfwCreateWindow(1280, 720, "2D Character Controller", NULL, NULL);
     if (!window) {
         glfwTerminate();
         return -1;
@@ -45,6 +46,9 @@ int main(void) {
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
+        // Create camera
+        Camera cam(-1.6f, 1.6f, -0.9f, 0.9f);
+
         // Assigning vertex data
         float positions[] = {
             -0.8f, -0.8f, 0.0f, 0.0f,
@@ -92,10 +96,24 @@ int main(void) {
 
         Renderer renderer;
 
+        float x = 0;
+        float inc = 0.005f;
+
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {  
             renderer.Clear();
-            renderer.Draw(va, ib, shader);
+
+            // For test move camera
+            cam.SetPosition(glm::vec3(x, 0, 0));
+
+            if (x >= 0.85f)
+                inc = -0.005f;
+            if (x <= -0.85f)
+                inc = 0.005f;
+
+            x += inc;
+
+            renderer.Draw(va, ib, shader, cam);
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(window));

@@ -5,6 +5,7 @@
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
+#include "Camera.h"
 
 // Macro to add break point if error has been encountered
 #define ASSERT(x) if ((!x)) __debugbreak();
@@ -19,5 +20,5 @@ bool GLLogCall(const char* function, const char* file, int line);
 class Renderer {
 public:
     void Clear() const;
-    void Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader) const;
+    void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const Camera& camera) const;
 };
