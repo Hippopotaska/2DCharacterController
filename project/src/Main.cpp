@@ -106,9 +106,9 @@ int main(void) {
             // For test move camera
             cam.SetPosition(glm::vec3(x, 0, 0));
 
-            if (x >= 0.85f)
+            if (x >= 0.8f)
                 inc = -0.005f;
-            if (x <= -0.85f)
+            if (x <= -0.8f)
                 inc = 0.005f;
 
             x += inc;
