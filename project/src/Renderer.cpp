@@ -19,9 +19,9 @@ void Renderer::Clear() const {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const Camera& camera) const {
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const Camera& camera, const glm::mat4& model) const {
     shader.Bind();
-    shader.SetUniformMat4("u_ViewProjection", camera.GetProjectionViewMatrix());
+    shader.SetUniformMat4("u_ModelViewProjection", camera.GetProjectionViewMatrix() * model);
     va.Bind();
     ib.Bind();
 

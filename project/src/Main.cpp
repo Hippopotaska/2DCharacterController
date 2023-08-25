@@ -1,5 +1,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+
+#include "glm/gtc/matrix_transform.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -47,14 +50,15 @@ int main(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         // Create camera
-        Camera cam(-1.6f, 1.6f, -0.9f, 0.9f);
+        float mult = 5.f;
+        Camera cam(-1.6f * mult, 1.6f * mult, -0.9f * mult, 0.9f * mult);
 
         // Assigning vertex data
         float positions[] = {
-            -0.8f, -0.8f, 0.0f, 0.0f,
-             0.8f, -0.8f, 1.0f, 0.0f,
-             0.8f,  0.8f, 1.0f, 1.0f,
-            -0.8f,  0.8f, 0.0f, 1.0f
+            -1.0f, -1.0f, 0.0f, 0.0f,
+             1.0f, -1.0f, 1.0f, 0.0f,
+             1.0f,  1.0f, 1.0f, 1.0f,
+            -1.0f,  1.0f, 0.0f, 1.0f
         };
 
         // Index buffering
@@ -83,7 +87,7 @@ int main(void) {
 
         Shader shader("src/shaders/Basic.shader");
         shader.Bind();
-        shader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0);
+        shader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
         Texture texture("res/textures/Cyndaquil.jpg");
         texture.Bind();
@@ -96,24 +100,39 @@ int main(void) {
 
         Renderer renderer;
 
-        float x = 0;
-        float inc = 0.005f;
+        float deltaTime = 0;
+        float prev = 0;
+        float n = 0;
+        float incr = 0.05f;
+
+        glm::vec3 playerPos(0.0f);
 
         /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window)) {  
             renderer.Clear();
 
-            // For test move camera
-            cam.SetPosition(glm::vec3(x, 0, 0));
+            auto elap = glfwGetTime();
+            deltaTime = elap - prev;
+            prev = elap;
+
+            playerPos.x = glm::cos(elap * elap);
+            playerPos.y = glm::sin(elap * elap);
+
+            std::cout << "Player Position: X[" << playerPos.x << "], Y[" << playerPos.y << "]" << std::endl;
+
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), playerPos);
+
+            /* for test move camera
+            cam.setposition(glm::vec3(x, 0, 0));
 
             if (x >= 0.8f)
                 inc = -0.005f;
             if (x <= -0.8f)
                 inc = 0.005f;
 
-            x += inc;
+            x += inc; */
 
-            renderer.Draw(va, ib, shader, cam);
+            renderer.Draw(va, ib, shader, cam, transform);
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(window));
