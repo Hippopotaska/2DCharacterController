@@ -19,9 +19,28 @@
 #include "Shader.h"
 #include "Texture.h"
 
-int main(void) {
-    GLFWwindow* window;
+namespace Player {
+    static glm::vec3 playerPos(0.0f);
+    static float deltaTime = 0.0f;
+    static float moveSpeed = 200.0f;
 
+    static bool moveLeft = false;
+    static bool moveRight = false;
+    static bool moveUp = false;
+    static bool moveDown = false;
+}
+
+namespace WindowData {
+    static GLFWwindow* window = nullptr;
+    static float width = 1280;
+    static float height = 720;
+    static std::string name = "2D Character Controller";
+    static bool isOpen = true;
+};
+
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+int main(void) {
     /* Initialize the library */
     if (!glfwInit())
         return -1;
@@ -31,14 +50,14 @@ int main(void) {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(1280, 720, "2D Character Controller", NULL, NULL);
-    if (!window) {
+    WindowData::window = glfwCreateWindow(WindowData::width, WindowData::height, WindowData::name.c_str(), NULL, NULL);
+    if (!WindowData::window) {
         glfwTerminate();
         return -1;
     }
 
     /* Make the window's context current */
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(WindowData::window);
     glfwSwapInterval(1);
 
     // Initialize GLEW
@@ -50,15 +69,15 @@ int main(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         // Create camera
-        float mult = 5.f;
+        float mult = 250.f;
         Camera cam(-1.6f * mult, 1.6f * mult, -0.9f * mult, 0.9f * mult);
 
         // Assigning vertex data
         float positions[] = {
-            -1.0f, -1.0f, 0.0f, 0.0f,
-             1.0f, -1.0f, 1.0f, 0.0f,
-             1.0f,  1.0f, 1.0f, 1.0f,
-            -1.0f,  1.0f, 0.0f, 1.0f
+            -50.0f, -50.0f, 0.0f, 0.0f,
+             50.0f, -50.0f, 1.0f, 0.0f,
+             50.0f,  50.0f, 1.0f, 1.0f,
+            -50.0f,  50.0f, 0.0f, 1.0f
         };
 
         // Index buffering
@@ -100,48 +119,81 @@ int main(void) {
 
         Renderer renderer;
 
-        float deltaTime = 0;
+        Player::deltaTime = 0;
         float prev = 0;
         float n = 0;
         float incr = 0.05f;
 
-        glm::vec3 playerPos(0.0f);
-
         /* Loop until the user closes the window */
-        while (!glfwWindowShouldClose(window)) {  
+        while (WindowData::isOpen) {
+            /* Poll for and process events */
+            GLCall(glfwPollEvents());
+            GLCall(glfwSetKeyCallback(WindowData::window, KeyCallback));
+
+            // CHECK PLAYER MOVEMENT
+            if (Player::moveRight) {
+                Player::playerPos.x += Player::moveSpeed * Player::deltaTime;
+            }
+            if (Player::moveLeft) {
+                Player::playerPos.x -= Player::moveSpeed * Player::deltaTime;
+            }
+            if (Player::moveUp) {
+                Player::playerPos.y += Player::moveSpeed * Player::deltaTime;
+            }
+            if (Player::moveDown) {
+                Player::playerPos.y -= Player::moveSpeed * Player::deltaTime;
+            }
+
+
             renderer.Clear();
 
             auto elap = glfwGetTime();
-            deltaTime = elap - prev;
+            Player::deltaTime = elap - prev;
             prev = elap;
 
-            playerPos.x = glm::cos(elap * elap);
-            playerPos.y = glm::sin(elap * elap);
-
-            std::cout << "Player Position: X[" << playerPos.x << "], Y[" << playerPos.y << "]" << std::endl;
-
-            glm::mat4 transform = glm::translate(glm::mat4(1.0f), playerPos);
-
-            /* for test move camera
-            cam.setposition(glm::vec3(x, 0, 0));
-
-            if (x >= 0.8f)
-                inc = -0.005f;
-            if (x <= -0.8f)
-                inc = 0.005f;
-
-            x += inc; */
+            glm::mat4 transform = glm::translate(glm::mat4(1.0f), Player::playerPos);
 
             renderer.Draw(va, ib, shader, cam, transform);
+            std::cout << "Player Position: (" << Player::playerPos.x << ", " << Player::playerPos.y << ")" << std::endl;
 
             /* Swap front and back buffers */
-            GLCall(glfwSwapBuffers(window));
-
-            /* Poll for and process events */
-            GLCall(glfwPollEvents());
+            GLCall(glfwSwapBuffers(WindowData::window));
         }
     }
 
     glfwTerminate();
     return 0;
+}
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        WindowData::isOpen = false;
+    }
+    
+    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
+        Player::moveRight = true;
+    }
+    if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
+        Player::moveRight = false;
+    } 
+
+    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
+        Player::moveLeft = true;
+    }
+    if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
+        Player::moveLeft = false;
+    }
+
+    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
+        Player::moveUp = true;
+    }
+    if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
+        Player::moveUp = false;
+    }
+
+    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
+        Player::moveDown = true;
+    }
+    if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
+        Player::moveDown = false;
+    }
 }
