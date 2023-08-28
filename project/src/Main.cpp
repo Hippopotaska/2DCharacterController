@@ -19,26 +19,36 @@
 #include "Shader.h"
 #include "Texture.h"
 
-namespace Player {
-    static glm::vec3 playerPos(0.0f);
-    static float deltaTime = 0.0f;
-    static float moveSpeed = 200.0f;
+static struct Player {
+    glm::vec3 playerPos;
+    float moveSpeed;
 
-    static bool moveLeft = false;
-    static bool moveRight = false;
-    static bool moveUp = false;
-    static bool moveDown = false;
-}
+    bool moveLeft;
+    bool moveRight;
+    bool moveUp;
+    bool moveDown;
+} Player;
 
-namespace WindowData {
-    static GLFWwindow* window = nullptr;
-    static float width = 1280;
-    static float height = 720;
-    static std::string name = "2D Character Controller";
-    static bool isOpen = true;
+static struct WindowData {
+    GLFWwindow* window;
+    int width;
+    int height;
+    const char* name;
+    bool isOpen;
+} WindowData;
+
+struct AABB {
+    glm::vec3 position;
+    glm::vec2 size;
+
+    AABB(glm::vec3 nPosition, glm::vec2 nSize) {
+        position = nPosition;
+        size = nSize;
+    }
 };
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+void CollisionDetection(AABB a, AABB b, Shader& blockShader);
 
 int main(void) {
     /* Initialize the library */
@@ -49,15 +59,23 @@ int main(void) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    /* Create a windowed mode window and its OpenGL context */
-    WindowData::window = glfwCreateWindow(WindowData::width, WindowData::height, WindowData::name.c_str(), NULL, NULL);
-    if (!WindowData::window) {
+    WindowData.width = 1280;
+    WindowData.height = 720;
+    WindowData.name = "2D Character Controller";
+    WindowData.isOpen = true;
+    WindowData.window = glfwCreateWindow(WindowData.width, WindowData.height, WindowData.name, NULL, NULL);
+
+    Player.playerPos = glm::vec3(0.0f);
+    Player.moveSpeed = 200.f;
+    Player.moveLeft, Player.moveRight, Player.moveUp, Player.moveDown = false;
+
+    if (!WindowData.window) {
         glfwTerminate();
         return -1;
     }
 
     /* Make the window's context current */
-    glfwMakeContextCurrent(WindowData::window);
+    glfwMakeContextCurrent(WindowData.window);
     glfwSwapInterval(1);
 
     // Initialize GLEW
@@ -104,96 +122,122 @@ int main(void) {
 
         IndexBuffer ib(indices, 6);
 
-        Shader shader("src/shaders/Basic.shader");
-        shader.Bind();
-        shader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
+        Shader blockShader("src/shaders/AABBTesting.shader");
+        blockShader.Bind();
+        blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
+
+        Shader plShader("src/shaders/Basic.shader");
+        plShader.Bind();
+        plShader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
         Texture texture("res/textures/Cyndaquil.jpg");
         texture.Bind();
-        shader.SetUniform1i("u_Texture", 0);
+        plShader.SetUniform1i("u_Texture", 0);
 
+        blockShader.Unbind();
+        plShader.Unbind();
         va.Unbind();
         vb.Unbind();
         ib.Unbind();
-        shader.Unbind();
 
         Renderer renderer;
 
-        Player::deltaTime = 0;
+        float deltaTime = 0;
         float prev = 0;
-        float n = 0;
-        float incr = 0.05f;
+
+        glm::vec3 blockPosition(150.0f, 0.0f, 0.0f);
+
+        AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
+        AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
 
         /* Loop until the user closes the window */
-        while (WindowData::isOpen) {
+        while (WindowData.isOpen) {
             /* Poll for and process events */
             GLCall(glfwPollEvents());
-            GLCall(glfwSetKeyCallback(WindowData::window, KeyCallback));
+            GLCall(glfwSetKeyCallback(WindowData.window, KeyCallback));
 
             // CHECK PLAYER MOVEMENT
-            if (Player::moveRight) {
-                Player::playerPos.x += Player::moveSpeed * Player::deltaTime;
+            if (Player.moveRight) {
+                Player.playerPos.x += Player.moveSpeed * deltaTime;
             }
-            if (Player::moveLeft) {
-                Player::playerPos.x -= Player::moveSpeed * Player::deltaTime;
+            if (Player.moveLeft) {
+                Player.playerPos.x -= Player.moveSpeed * deltaTime;
             }
-            if (Player::moveUp) {
-                Player::playerPos.y += Player::moveSpeed * Player::deltaTime;
+            if (Player.moveUp) {
+                Player.playerPos.y += Player.moveSpeed * deltaTime;
             }
-            if (Player::moveDown) {
-                Player::playerPos.y -= Player::moveSpeed * Player::deltaTime;
+            if (Player.moveDown) {
+                Player.playerPos.y -= Player.moveSpeed * deltaTime;
             }
 
+            // Update collider positions
+            playerCollider.position = Player.playerPos;
+            blockCollider.position = blockPosition;
+
+            // TODO: AABB
+            CollisionDetection(playerCollider, blockCollider, blockShader);
 
             renderer.Clear();
 
-            auto elap = glfwGetTime();
-            Player::deltaTime = elap - prev;
+            auto elap = (float)glfwGetTime();
+            deltaTime = elap - prev;
             prev = elap;
 
-            glm::mat4 transform = glm::translate(glm::mat4(1.0f), Player::playerPos);
+            glm::mat4 plTransform = glm::translate(glm::mat4(1.0f), Player.playerPos);
+            glm::mat4 blockTransform = glm::translate(glm::mat4(1.0f), blockPosition);
 
-            renderer.Draw(va, ib, shader, cam, transform);
-            std::cout << "Player Position: (" << Player::playerPos.x << ", " << Player::playerPos.y << ")" << std::endl;
+            renderer.Draw(va, ib, blockShader, cam, blockTransform);
+            renderer.Draw(va, ib, plShader, cam, plTransform);
+            std::cout << "Player Position: (" << Player.playerPos.x << ", " << Player.playerPos.y << ")" << std::endl;
 
             /* Swap front and back buffers */
-            GLCall(glfwSwapBuffers(WindowData::window));
+            GLCall(glfwSwapBuffers(WindowData.window));
         }
     }
 
     glfwTerminate();
     return 0;
 }
+
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        WindowData::isOpen = false;
-    }
-    
-    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        Player::moveRight = true;
-    }
-    if (key == GLFW_KEY_D && action == GLFW_RELEASE) {
-        Player::moveRight = false;
-    } 
-
-    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        Player::moveLeft = true;
-    }
-    if (key == GLFW_KEY_A && action == GLFW_RELEASE) {
-        Player::moveLeft = false;
+        WindowData.isOpen = false;
     }
 
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        Player::moveUp = true;
+    if (key == GLFW_KEY_D) {
+        if (action == GLFW_PRESS)
+            Player.moveRight = true;
+        else if (action == GLFW_RELEASE)
+            Player.moveRight = false;
     }
-    if (key == GLFW_KEY_W && action == GLFW_RELEASE) {
-        Player::moveUp = false;
+    if (key == GLFW_KEY_A) {
+        if (action == GLFW_PRESS)
+            Player.moveLeft = true;
+        else if (action == GLFW_RELEASE)
+            Player.moveLeft = false;
+    }
+    if (key == GLFW_KEY_W) {
+        if (action == GLFW_PRESS)
+            Player.moveUp = true;
+        else if (action == GLFW_RELEASE)
+            Player.moveUp = false;
+    }
+    if (key == GLFW_KEY_S) {
+        if (action == GLFW_PRESS)
+            Player.moveDown = true;
+        else if (action == GLFW_RELEASE)
+            Player.moveDown = false;
+    }
+}
+
+void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
+    glm::vec4 red(1.0f, 0.0f, 0.0f, 1.0f);
+    glm::vec4 grn(0.0f, 1.0f, 0.0f, 1.0f);
+    blockShader.Bind();
+    // Comparison if here; If collision then set the block Shader color to be red and if not then green
+    if (1 == 1) {
+
     }
 
-    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        Player::moveDown = true;
-    }
-    if (key == GLFW_KEY_S && action == GLFW_RELEASE) {
-        Player::moveDown = false;
-    }
+    blockShader.Unbind();
 }
