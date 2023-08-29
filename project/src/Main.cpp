@@ -148,7 +148,7 @@ int main(void) {
         glm::vec3 blockPosition(150.0f, 0.0f, 0.0f);
 
         AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
-        AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
+        AABB blockCollider(blockPosition, glm::vec2(150.f, 150.f));
 
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -231,13 +231,18 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 }
 
 void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
-    glm::vec4 red(1.0f, 0.0f, 0.0f, 1.0f);
-    glm::vec4 grn(0.0f, 1.0f, 0.0f, 1.0f);
     blockShader.Bind();
     // Comparison if here; If collision then set the block Shader color to be red and if not then green
-    if (1 == 1) {
-
+    if (a.position.x < b.position.x + b.size.x &&
+        a.position.x + a.size.x > b.position.x &&
+        a.position.y < b.position.y + b.size.y &&
+        a.position.y + a.size.y > b.position.y)
+    {
+        blockShader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
+        // TODO: Solve collision
     }
+    else
+        blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
 
     blockShader.Unbind();
 }
