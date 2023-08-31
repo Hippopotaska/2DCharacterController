@@ -122,11 +122,11 @@ int main(void) {
 
         IndexBuffer ib(indices, 6);
 
-        Shader blockShader("src/shaders/AABBTesting.shader");
+        Shader blockShader("src/shaders/AABBTesting.glsl");
         blockShader.Bind();
         blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
 
-        Shader plShader("src/shaders/Basic.shader");
+        Shader plShader("src/shaders/Basic.glsl");
         plShader.Bind();
         plShader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -186,6 +186,10 @@ int main(void) {
 
             glm::mat4 plTransform = glm::translate(glm::mat4(1.0f), Player.playerPos);
             glm::mat4 blockTransform = glm::translate(glm::mat4(1.0f), blockPosition);
+
+            plShader.Bind();
+            plShader.SetUniform1f("u_Time", elap);
+            plShader.Unbind();
 
             renderer.Draw(va, ib, blockShader, cam, blockTransform);
             renderer.Draw(va, ib, plShader, cam, plTransform);

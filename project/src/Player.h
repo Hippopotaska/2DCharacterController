@@ -16,5 +16,6 @@ public:
 	Player(Transform transform, AABB collider, float moveSpeed);
 	~Player();
 
+	void Start();
 	void Update(float deltaTime);
 };

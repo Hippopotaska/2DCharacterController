@@ -12,7 +12,7 @@ add_compile_definitions(GLEW_STATIC)
 file(GLOB_RECURSE 2DCharacterController_SRC
 	"src/*.h"
 	"src/*.cpp"
-	"src/*.shader"
+	"src/*.glsl"
 )
 
 # GLEW source
