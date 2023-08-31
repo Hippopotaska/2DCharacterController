@@ -147,8 +147,9 @@ int main(void) {
 
         glm::vec3 blockPosition(150.0f, 0.0f, 0.0f);
 
+        // TODO: Object pivot is in the right down corner, causing the collider to not be correct.
         AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
-        AABB blockCollider(blockPosition, glm::vec2(150.f, 150.f));
+        AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
 
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {

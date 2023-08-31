@@ -2,15 +2,14 @@
 
 #include <glm/glm.hpp>
 
-class Transform {
-private:
-	glm::mat4 mTransform;
-	glm::vec3 mPosition;
-public:
-	Transform();
-	Transform(glm::vec3 position);
-	~Transform();
+struct Transform {
+	glm::mat4 transform;
+	glm::vec3 position;
+	glm::vec3 scale;
 
-	const glm::vec3& GetPosition() const;
-	void SetPosition(glm::vec3& newPos);
+	Transform(glm::mat4 nTransform, glm::vec3 nPosition, glm::vec3 nScale) {
+		transform = nTransform;
+		position = nPosition;
+		scale = nScale;
+	}
 };
