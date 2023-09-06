@@ -5,3 +5,6 @@ Player::Player(Transform transform, AABB collider, float moveSpeed)
 Player::~Player() {
 
 }
+
+void Player::Start() {}
+void Player::Update(float deltaTime) {}

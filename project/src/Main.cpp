@@ -49,6 +49,7 @@ struct AABB {
 
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 void CollisionDetection(AABB a, AABB b, Shader& blockShader);
+void DoCollisions();
 
 int main(void) {
     /* Initialize the library */
@@ -187,10 +188,6 @@ int main(void) {
             glm::mat4 plTransform = glm::translate(glm::mat4(1.0f), Player.playerPos);
             glm::mat4 blockTransform = glm::translate(glm::mat4(1.0f), blockPosition);
 
-            plShader.Bind();
-            plShader.SetUniform1f("u_Time", elap);
-            plShader.Unbind();
-
             renderer.Draw(va, ib, blockShader, cam, blockTransform);
             renderer.Draw(va, ib, plShader, cam, plTransform);
             std::cout << "Player Position: (" << Player.playerPos.x << ", " << Player.playerPos.y << ")" << std::endl;
@@ -244,10 +241,13 @@ void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
         a.position.y + a.size.y > b.position.y)
     {
         blockShader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
-        // TODO: Solve collision
     }
     else
         blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
 
     blockShader.Unbind();
+}
+
+void DoCollision() {
+    // Go through all the solid objects in the scene
 }
