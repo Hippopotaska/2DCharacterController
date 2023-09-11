@@ -17,21 +17,24 @@ void Player::Update(float deltaTime) {
 	if (inputMgr->IsKeyHeld(GLFW_KEY_A)) {
 		mTransform.position.x -= mMoveSpeed * deltaTime;
 	}
-	else if (inputMgr->IsKeyHeld(GLFW_KEY_D)) {
+	if (inputMgr->IsKeyHeld(GLFW_KEY_D)) {
 		mTransform.position.x += mMoveSpeed * deltaTime;
 	}	
-	else if (inputMgr->IsKeyHeld(GLFW_KEY_S)) {
+	if (inputMgr->IsKeyHeld(GLFW_KEY_S)) {
 		mTransform.position.y -= mMoveSpeed * deltaTime;
 	}	
-	else if (inputMgr->IsKeyHeld(GLFW_KEY_W)) {
+	if (inputMgr->IsKeyHeld(GLFW_KEY_W)) {
 		mTransform.position.y += mMoveSpeed * deltaTime;
 	}
 
-
 	mTransform.transform = glm::translate(glm::mat4(1.0f), mTransform.position);
-	// TODO: Update components
+
+	mCollider.SetPosition(mTransform.position);
 }
 
 Transform Player::GetTransform() {
 	return mTransform;
+}
+AABB Player::GetCollider() {
+	return mCollider;
 }

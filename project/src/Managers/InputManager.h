@@ -7,12 +7,14 @@ class InputManager {
 private:
 	GLFWwindow* mWindow;
 	std::unordered_map<int, bool> mKeys = {
-		{65, false},
-		{83, false},
-		{68, false},
-		{87, false},
+		{256, false},	// Escape
+		
+		{65, false},	// A
+		{83, false},	// S
+		{68, false},	// D
+		{87, false},	// W
 
-		{32, false},
+		{32, false},	// Space
 	};
 
 	inline static InputManager* mInstance = nullptr;

@@ -13,8 +13,10 @@
 #include "Camera.h"
 
 #include "Managers/InputManager.h"
+#include "Managers/GameManager.h"
 
 #include "Player.h"
+#include "Solid.h"
 #include "Transform.h"
 
 #include "VertexBuffer.h"
@@ -62,6 +64,8 @@ int main(void) {
 
     InputManager* inputMgr = inputMgr->GetInstance();
     inputMgr->SetWindow(WindowData.window);
+
+    GameManager* gameMgr = gameMgr->GetInstance();
 
     // Initialize GLEW
     if (glewInit() != GLEW_OK)
@@ -130,17 +134,21 @@ int main(void) {
         float deltaTime = 0;
         float prev = 0;
 
-        glm::vec3 blockPosition(150.0f, 0.0f, 0.0f);
-
-        // TODO: Object pivot is in the right down corner, causing the collider to not be correct.
-        //AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
-        //AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
-
         Transform playerTransform(glm::mat4(1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-        AABB playerCollider(playerTransform);
+        AABB playerCollider(playerTransform, glm::vec2(100,100));
+
+        Transform SolidTransform(glm::mat4(1.0f), glm::vec3(150.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+        AABB solidCollider(SolidTransform, glm::vec2(100, 100));
+
+        SolidTransform.transform = glm::translate(glm::mat4(1.0f), SolidTransform.position);
 
         Player* player = new Player(playerTransform, playerCollider, 200.f);
+        Solid* solid = new Solid(SolidTransform, solidCollider);
 
+        std::vector<Solid*> level;
+        level.push_back(solid);
+
+        gameMgr->Init(player, level);
 
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -152,20 +160,18 @@ int main(void) {
             deltaTime = elap - prev;
             prev = elap;
 
-            // Update collider positions
+            gameMgr->Update(deltaTime);
+
             player->Update(deltaTime);
-            //blockCollider.position = blockPosition;
 
-            // TODO: AABB
-            //CollisionDetection(playerCollider, blockCollider, blockShader);
-
+            if (inputMgr->IsKeyHeld(GLFW_KEY_ESCAPE)) {
+                WindowData.isOpen = false;
+            }
             renderer.Clear();
 
-            glm::mat4 blockTransform = glm::translate(glm::mat4(1.0f), blockPosition);
-
-            renderer.Draw(va, ib, blockShader, cam, blockTransform);
+            renderer.Draw(va, ib, blockShader, cam, solid->GetTransform().transform);
             renderer.Draw(va, ib, plShader, cam, player->GetTransform().transform);
-            std::cout << "Player Position: (" << player->GetTransform().position.x << ", " << player->GetTransform().position.y << ")" << std::endl;
+            //std::cout << "Player Position: (" << player->GetTransform().position.x << ", " << player->GetTransform().position.y << ")" << std::endl;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));
@@ -175,23 +181,3 @@ int main(void) {
     glfwTerminate();
     return 0;
 }
-
-//void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
-//    blockShader.Bind();
-//    // Comparison if here; If collision then set the block Shader color to be red and if not then green
-//    if (a.position.x < b.position.x + b.size.x &&
-//        a.position.x + a.size.x > b.position.x &&
-//        a.position.y < b.position.y + b.size.y &&
-//        a.position.y + a.size.y > b.position.y)
-//    {
-//        blockShader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
-//    }
-//    else
-//        blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
-//
-//    blockShader.Unbind();
-//}
-
-//void DoCollision() {
-//    // Go through all the solid objects in the scene
-//}

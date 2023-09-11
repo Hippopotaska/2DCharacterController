@@ -7,8 +7,8 @@
 
 class Player {
 private:
-	Transform mTransform;
-	AABB mCollider;
+	class Transform mTransform;
+	class AABB mCollider;
 
 	float mMoveSpeed;
 
@@ -20,4 +20,5 @@ public:
 	void Update(float deltaTime);
 
 	Transform GetTransform();
+	AABB GetCollider();
 };

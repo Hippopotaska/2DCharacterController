@@ -28,6 +28,7 @@ void InputManager::KeyCallbackDispatcher(GLFWwindow* window, int key, int scanco
     mInstance->KeyCallback(window, key, scancode, action, mods);
 }
 
+// TODO: Should probably add check if a key is pressed and released
 bool InputManager::IsKeyHeld(int key) {
     return mKeys.at(key);
 }
