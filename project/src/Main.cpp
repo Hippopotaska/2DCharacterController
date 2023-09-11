@@ -12,22 +12,17 @@
 #include "Renderer.h"
 #include "Camera.h"
 
+#include "Managers/InputManager.h"
+
+#include "Player.h"
+#include "Transform.h"
+
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
-
-static struct Player {
-    glm::vec3 playerPos;
-    float moveSpeed;
-
-    bool moveLeft;
-    bool moveRight;
-    bool moveUp;
-    bool moveDown;
-} Player;
 
 static struct WindowData {
     GLFWwindow* window;
@@ -37,19 +32,9 @@ static struct WindowData {
     bool isOpen;
 } WindowData;
 
-struct AABB {
-    glm::vec3 position;
-    glm::vec2 size;
 
-    AABB(glm::vec3 nPosition, glm::vec2 nSize) {
-        position = nPosition;
-        size = nSize;
-    }
-};
-
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-void CollisionDetection(AABB a, AABB b, Shader& blockShader);
-void DoCollisions();
+//void CollisionDetection(AABB a, AABB b, Shader& blockShader);
+//void DoCollisions();
 
 int main(void) {
     /* Initialize the library */
@@ -66,10 +51,6 @@ int main(void) {
     WindowData.isOpen = true;
     WindowData.window = glfwCreateWindow(WindowData.width, WindowData.height, WindowData.name, NULL, NULL);
 
-    Player.playerPos = glm::vec3(0.0f);
-    Player.moveSpeed = 200.f;
-    Player.moveLeft, Player.moveRight, Player.moveUp, Player.moveDown = false;
-
     if (!WindowData.window) {
         glfwTerminate();
         return -1;
@@ -78,6 +59,9 @@ int main(void) {
     /* Make the window's context current */
     glfwMakeContextCurrent(WindowData.window);
     glfwSwapInterval(1);
+
+    InputManager* inputMgr = inputMgr->GetInstance();
+    inputMgr->SetWindow(WindowData.window);
 
     // Initialize GLEW
     if (glewInit() != GLEW_OK)
@@ -149,48 +133,39 @@ int main(void) {
         glm::vec3 blockPosition(150.0f, 0.0f, 0.0f);
 
         // TODO: Object pivot is in the right down corner, causing the collider to not be correct.
-        AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
-        AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
+        //AABB playerCollider(glm::vec3(0.0f), glm::vec2(100.f, 100.f));
+        //AABB blockCollider(blockPosition, glm::vec2(100.f, 100.f));
+
+        Transform playerTransform(glm::mat4(1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+        AABB playerCollider(playerTransform);
+
+        Player* player = new Player(playerTransform, playerCollider, 200.f);
+
 
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
             /* Poll for and process events */
             GLCall(glfwPollEvents());
-            GLCall(glfwSetKeyCallback(WindowData.window, KeyCallback));
-
-            // CHECK PLAYER MOVEMENT
-            if (Player.moveRight) {
-                Player.playerPos.x += Player.moveSpeed * deltaTime;
-            }
-            if (Player.moveLeft) {
-                Player.playerPos.x -= Player.moveSpeed * deltaTime;
-            }
-            if (Player.moveUp) {
-                Player.playerPos.y += Player.moveSpeed * deltaTime;
-            }
-            if (Player.moveDown) {
-                Player.playerPos.y -= Player.moveSpeed * deltaTime;
-            }
-
-            // Update collider positions
-            playerCollider.position = Player.playerPos;
-            blockCollider.position = blockPosition;
-
-            // TODO: AABB
-            CollisionDetection(playerCollider, blockCollider, blockShader);
-
-            renderer.Clear();
+            GLCall(glfwSetKeyCallback(WindowData.window, InputManager::KeyCallbackDispatcher));
 
             auto elap = (float)glfwGetTime();
             deltaTime = elap - prev;
             prev = elap;
 
-            glm::mat4 plTransform = glm::translate(glm::mat4(1.0f), Player.playerPos);
+            // Update collider positions
+            player->Update(deltaTime);
+            //blockCollider.position = blockPosition;
+
+            // TODO: AABB
+            //CollisionDetection(playerCollider, blockCollider, blockShader);
+
+            renderer.Clear();
+
             glm::mat4 blockTransform = glm::translate(glm::mat4(1.0f), blockPosition);
 
             renderer.Draw(va, ib, blockShader, cam, blockTransform);
-            renderer.Draw(va, ib, plShader, cam, plTransform);
-            std::cout << "Player Position: (" << Player.playerPos.x << ", " << Player.playerPos.y << ")" << std::endl;
+            renderer.Draw(va, ib, plShader, cam, player->GetTransform().transform);
+            std::cout << "Player Position: (" << player->GetTransform().position.x << ", " << player->GetTransform().position.y << ")" << std::endl;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));
@@ -201,53 +176,22 @@ int main(void) {
     return 0;
 }
 
-void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        WindowData.isOpen = false;
-    }
+//void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
+//    blockShader.Bind();
+//    // Comparison if here; If collision then set the block Shader color to be red and if not then green
+//    if (a.position.x < b.position.x + b.size.x &&
+//        a.position.x + a.size.x > b.position.x &&
+//        a.position.y < b.position.y + b.size.y &&
+//        a.position.y + a.size.y > b.position.y)
+//    {
+//        blockShader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
+//    }
+//    else
+//        blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
+//
+//    blockShader.Unbind();
+//}
 
-    if (key == GLFW_KEY_D) {
-        if (action == GLFW_PRESS)
-            Player.moveRight = true;
-        else if (action == GLFW_RELEASE)
-            Player.moveRight = false;
-    }
-    if (key == GLFW_KEY_A) {
-        if (action == GLFW_PRESS)
-            Player.moveLeft = true;
-        else if (action == GLFW_RELEASE)
-            Player.moveLeft = false;
-    }
-    if (key == GLFW_KEY_W) {
-        if (action == GLFW_PRESS)
-            Player.moveUp = true;
-        else if (action == GLFW_RELEASE)
-            Player.moveUp = false;
-    }
-    if (key == GLFW_KEY_S) {
-        if (action == GLFW_PRESS)
-            Player.moveDown = true;
-        else if (action == GLFW_RELEASE)
-            Player.moveDown = false;
-    }
-}
-
-void CollisionDetection(AABB a, AABB b, Shader& blockShader) {
-    blockShader.Bind();
-    // Comparison if here; If collision then set the block Shader color to be red and if not then green
-    if (a.position.x < b.position.x + b.size.x &&
-        a.position.x + a.size.x > b.position.x &&
-        a.position.y < b.position.y + b.size.y &&
-        a.position.y + a.size.y > b.position.y)
-    {
-        blockShader.SetUniform4f("u_Color", 1.0f, 0.0f, 0.0f, 1.0f);
-    }
-    else
-        blockShader.SetUniform4f("u_Color", 0.0f, 1.0f, 0.0f, 1.0f);
-
-    blockShader.Unbind();
-}
-
-void DoCollision() {
-    // Go through all the solid objects in the scene
-}
+//void DoCollision() {
+//    // Go through all the solid objects in the scene
+//}

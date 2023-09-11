@@ -5,6 +5,5 @@ AABB::AABB(Transform transform)
 AABB::~AABB() {}
 
 void AABB::Update(float deltaTime) {
-	// Collision checks
-	// How to check collision with another object
+	
 }

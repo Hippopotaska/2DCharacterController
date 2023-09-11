@@ -18,4 +18,6 @@ public:
 
 	void Start();
 	void Update(float deltaTime);
+
+	Transform GetTransform();
 };
