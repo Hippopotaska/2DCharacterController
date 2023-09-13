@@ -4,16 +4,18 @@
 
 #include "Transform.h"
 #include "AABB.h"
+#include "Sprite.h"
 
 class Player {
 private:
-	class Transform mTransform;
-	class AABB mCollider;
+	Transform mTransform;
+	AABB mCollider;
+	Sprite mSprite;
 
 	float mMoveSpeed;
 
 public:
-	Player(Transform transform, AABB collider, float moveSpeed);
+	Player(Transform nTransform, AABB nCollider, Sprite nSprite, float nMoveSpeed);
 	~Player();
 
 	void Start();

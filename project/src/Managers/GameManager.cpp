@@ -30,7 +30,7 @@ void GameManager::CheckCollisions(Solid* solid) {
 		plPos.x + plColl.GetWidth() > slPos.x &&
 		plPos.y < slPos.y + slColl.GetHeight() &&
 		plPos.y + plColl.GetHeight() > slPos.y) {
-		std::cout << "Collision happening" << std::endl;
+		std::cout << "Collision happening!" << std::endl;
 	}
 }
 

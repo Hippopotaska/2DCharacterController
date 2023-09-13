@@ -5,8 +5,8 @@
 
 #include "Managers/InputManager.h"
 
-Player::Player(Transform transform, AABB collider, float moveSpeed) 
-	: mTransform(transform), mCollider(collider), mMoveSpeed(moveSpeed) {}
+Player::Player(Transform nTransform, AABB nCollider, Sprite nSprite, float nMoveSpeed) 
+	: mTransform(nTransform), mCollider(nCollider), mSprite(nSprite), mMoveSpeed(nMoveSpeed) {}
 Player::~Player() {}
 
 void Player::Start() {}
@@ -30,6 +30,8 @@ void Player::Update(float deltaTime) {
 	mTransform.transform = glm::translate(glm::mat4(1.0f), mTransform.position);
 
 	mCollider.SetPosition(mTransform.position);
+	mSprite.SetPosition(mTransform.position);
+	mSprite.Draw();
 }
 
 Transform Player::GetTransform() {

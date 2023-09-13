@@ -1,8 +1,12 @@
 #include "Solid.h"
 
-Solid::Solid(Transform nTransform, AABB nCollider) 
-	: mTransform(nTransform), mCollider(nCollider) {}
+Solid::Solid(Transform nTransform, AABB nCollider, Sprite nSprite) 
+	: mTransform(nTransform), mCollider(nCollider), mSprite(nSprite) {}
 Solid::~Solid() {}
+
+void Solid::Update(float deltaTime) {
+	mSprite.Draw();
+}
 
 Transform Solid::GetTransform() {
 	return mTransform;

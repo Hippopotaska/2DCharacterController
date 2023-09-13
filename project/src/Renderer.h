@@ -18,7 +18,21 @@ void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
 class Renderer {
+private:
+    Camera* mCamera;
+    
+    inline static Renderer* mInstance = nullptr;
+
+    Renderer();
+
 public:
+    static Renderer* GetInstance();
+
+    void Init(Camera* camera);
+
     void Clear() const;
-    void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const Camera& camera, const glm::mat4& model) const;
+    void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const glm::mat4& model) const;
+
+    Renderer(Renderer& other) = delete;
+    void operator=(const Renderer&) = delete;
 };

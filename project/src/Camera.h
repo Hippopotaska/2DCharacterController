@@ -10,8 +10,13 @@ private:
 
 	glm::vec3 mPosition;
 
+	inline static Camera* mInstance = nullptr;
+
+	Camera();
+
 public:
-	Camera(float left, float right, float bottom, float top);
+	void Init(float left, float right, float bottom, float top);
+	static Camera* GetInstance();
 
 	const glm::vec3& GetPosition() const { return mPosition; }
 	const glm::mat4& GetProjectionMatrix() const { return mProjectionMatrix; }
@@ -19,6 +24,9 @@ public:
 	const glm::mat4& GetProjectionViewMatrix() const { return mProjectionViewMatrix; }
 
 	void SetPosition(const glm::vec3& position) { mPosition = position; RecalculateViewMatrix(); }
+
+	Camera(Camera& other) = delete;
+	void operator=(const Camera&) = delete;
 private:
 	void RecalculateViewMatrix();
 };

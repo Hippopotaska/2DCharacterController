@@ -15,13 +15,27 @@ bool GLLogCall(const char* function, const char* file, int line) {
     return true;
 }
 
+// Renderer class functions
+Renderer::Renderer() 
+    : mCamera(nullptr) {}
+
+Renderer* Renderer::GetInstance() {
+    if (!mInstance)
+        mInstance = new Renderer();
+    return mInstance;
+}
+
+void Renderer::Init(Camera* camera) {
+    mCamera = camera;
+}
+
 void Renderer::Clear() const {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const Camera& camera, const glm::mat4& model) const {
+void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const glm::mat4& model) const {
     shader.Bind();
-    shader.SetUniformMat4("u_ModelViewProjection", camera.GetProjectionViewMatrix() * model);
+    shader.SetUniformMat4("u_ModelViewProjection", mCamera->GetProjectionViewMatrix() * model);
     va.Bind();
     ib.Bind();
 
