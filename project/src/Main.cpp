@@ -177,7 +177,6 @@ int main(void) {
 #pragma endregion
 
 
-
             if (inputMgr->IsKeyHeld(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
             }
