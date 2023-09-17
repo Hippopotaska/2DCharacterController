@@ -31,7 +31,8 @@ void Player::Update(float deltaTime) {
 
 	mCollider.SetPosition(mTransform.position);
 	mSprite.SetPosition(mTransform.position);
-	mSprite.Draw();
+
+	mSprite.DrawSprite();
 }
 
 Transform Player::GetTransform() {

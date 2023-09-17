@@ -7,7 +7,7 @@ Camera::Camera()
 
 void Camera::Init(float left, float right, float bottom, float top) {
 	mProjectionMatrix = glm::ortho(left, right, bottom, top, -1.0f, 1.0f);
-	mProjectionViewMatrix = mProjectionMatrix * mViewMatrix;
+	RecalculateViewMatrix();
 }
 
 Camera* Camera::GetInstance() {

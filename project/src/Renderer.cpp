@@ -1,6 +1,11 @@
 #include "Renderer.h"
 #include <iostream>
 
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "Shader.h"
+#include "Sprite.h"
+
 // Error checking functions
 void GLClearError() {
     while (glGetError() != GL_NO_ERROR);
@@ -33,11 +38,13 @@ void Renderer::Clear() const {
     GLCall(glClear(GL_COLOR_BUFFER_BIT));
 }
 
-void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const glm::mat4& model) const {
-    shader.Bind();
-    shader.SetUniformMat4("u_ModelViewProjection", mCamera->GetProjectionViewMatrix() * model);
-    va.Bind();
-    ib.Bind();
+void Renderer::Draw(Sprite& spr) {
+    Shader* shader = spr.GetShader();
+    shader->Bind();
 
-    GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
+    shader->SetUniformMat4("u_ModelViewProjection", mCamera->GetProjectionViewMatrix() * spr.GetTransform().transform);
+    spr.GetVA()->Bind();
+    spr.GetIB()->Bind();
+
+    GLCall(glDrawElements(GL_TRIANGLES, spr.GetIB()->GetCount(), GL_UNSIGNED_INT, nullptr));
 }

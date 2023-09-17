@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include "Renderer.h"
 
 class Texture {
@@ -9,7 +10,8 @@ private:
 	unsigned char* mLocalBuffer;
 	int mWidth;
 	int mHeight;
-	int mBPP;						// Bits per pixel
+	int mBPP; // Bits per pixel
+
 public:
 	Texture(const std::string& path);
 	~Texture();

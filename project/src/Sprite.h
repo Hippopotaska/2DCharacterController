@@ -1,36 +1,40 @@
 #pragma once
 
-#include <string>
+#include "Renderer.h"
 
 #include "Transform.h"
-
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
 #include "Shader.h"
 #include "Texture.h"
+
+#include "VertexArray.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexBufferLayout.h"
 
 class Sprite {
 private:
 	Transform mTransform;
-
-	VertexArray* mVertexArray = nullptr;
-	VertexBuffer* mVertexBuffer = nullptr;
-	VertexBufferLayout* mLayout = nullptr;
-	IndexBuffer* mIndexBuffer = nullptr;
-
+	glm::vec3 mColor;
 	Shader* mShader = nullptr;
 	Texture* mTexture = nullptr;
 
+	VertexArray* mVertexArray = nullptr;
+	VertexBuffer mVertexBuffer;
+	IndexBuffer* mIndexBuffer = nullptr;
+	VertexBufferLayout mVertexBufferLayout;
+
+	void InitSpriteData();
+
 public:
-	Sprite(Transform nTransform, std::string shaderSrc);
+	Sprite(Shader* nShader, Texture* nTexture, Transform nTransform, glm::vec3 nColor);
 	~Sprite();
 
-	void Draw();
+	void DrawSprite();
 
-	void SetTexture(std::string textureSrc);
+	inline Transform GetTransform() { return mTransform; }
+	inline Shader* GetShader() { return mShader; }
+	inline VertexArray* GetVA() { return mVertexArray; }
+	inline IndexBuffer* GetIB() { return mIndexBuffer; }
 
-	void SetPosition(glm::vec3 newPosition);
-	glm::vec3 GetPosition();
+	void SetPosition(glm::vec3 newPos);
 };

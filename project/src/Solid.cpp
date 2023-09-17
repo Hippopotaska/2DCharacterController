@@ -5,7 +5,7 @@ Solid::Solid(Transform nTransform, AABB nCollider, Sprite nSprite)
 Solid::~Solid() {}
 
 void Solid::Update(float deltaTime) {
-	mSprite.Draw();
+	mSprite.DrawSprite();
 }
 
 Transform Solid::GetTransform() {

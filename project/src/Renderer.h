@@ -2,9 +2,6 @@
 
 #include <GL/glew.h>
 
-#include "VertexArray.h"
-#include "IndexBuffer.h"
-#include "Shader.h"
 #include "Camera.h"
 
 // Macro to add break point if error has been encountered
@@ -31,7 +28,7 @@ public:
     void Init(Camera* camera);
 
     void Clear() const;
-    void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader, const glm::mat4& model) const;
+    void Draw(class Sprite& spr);
 
     Renderer(Renderer& other) = delete;
     void operator=(const Renderer&) = delete;
