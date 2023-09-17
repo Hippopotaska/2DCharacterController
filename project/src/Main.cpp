@@ -65,7 +65,7 @@ int main(void) {
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         // Create camera
-        float mult = 50.f;
+        float mult = 250.f;
         Camera* camera = camera->GetInstance();
         camera->Init(-1.6f * mult, 1.6f * mult, -0.9f * mult, 0.9f * mult);
 
@@ -74,50 +74,6 @@ int main(void) {
 
         Renderer* renderer = renderer->GetInstance();
         renderer->Init(camera);
-
-
-#pragma region Rendering Test
-        float positions[] = {		// Vertex data
-        -50.0f, -50.0f, 0.0f, 0.0f,
-         50.0f, -50.0f, 1.0f, 0.0f,
-         50.0f,  50.0f, 1.0f, 1.0f,
-        -50.0f,  50.0f, 0.0f, 1.0f
-        };
-
-        unsigned int indices[] = {	// Index Buffer
-        0, 1, 2,
-        2, 3, 0
-        };
-
-        unsigned int vao;
-        GLCall(glGenVertexArrays(1, &vao));
-        GLCall(glBindVertexArray(vao));
-
-        VertexBuffer vb;
-        vb.Init(positions, 4 * 4 * sizeof(float));
-
-        VertexBufferLayout vbl;
-        vbl.Push(GL_FLOAT, 2);
-        vbl.Push(GL_FLOAT, 2);
-
-        VertexArray va;
-        va.AddBuffer(vb, vbl);
-
-        IndexBuffer ib;
-        ib.Init(indices, 6);
-
-        Shader shader("src/shaders/Basic.glsl");
-        shader.Bind();
-        shader.SetUniform4f("u_Color", 1.0f, 1.0f, 1.0f, 1.0f);
-
-        Texture texture("res/textures/Cyndaquil.jpg");
-        shader.SetUniform1i("u_Texture", 0);
-
-        shader.Unbind();
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-#pragma endregion
 
         float deltaTime = 0;
         float prev = 0;
@@ -157,32 +113,14 @@ int main(void) {
 
             gameMgr->Update(deltaTime);
 
+            renderer->Clear();
+
             player->Update(deltaTime);
             solid->Update(deltaTime);
-
-#pragma region Rendering Test      
-            shader.Bind();
-
-            glm::mat4 projection = camera->GetProjectionMatrix();
-            glm::mat4 view = camera->GetViewMatrix();
-            glm::mat4 model = glm::translate(glm::mat4(1.0f), playerTransform.position);
-
-            glm::mat4 mvp = projection * view * model;
-
-            shader.SetUniformMat4("u_ModelViewProjection", mvp);
-            va.Bind();
-            ib.Bind();
-
-            GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
-#pragma endregion
-
 
             if (inputMgr->IsKeyHeld(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
             }
-
-            renderer->Clear();
-            GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));
