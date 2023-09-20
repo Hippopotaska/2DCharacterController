@@ -1,7 +1,7 @@
 #include "Sprite.h"
 
-Sprite::Sprite(Shader* nShader, Texture* nTexture, Transform nTransform, glm::vec3 nColor)
-	: mShader(nShader), mTexture(nTexture), mTransform(nTransform), mColor(nColor) {
+Sprite::Sprite(Shader* nShader, Texture* nTexture, glm::vec3 nColor, Transform nTransform, Transform* nParent)
+	: mShader(nShader), mTexture(nTexture), mColor(nColor), Component(nTransform, nParent) {
 	InitSpriteData();
 }
 Sprite::~Sprite() {}
@@ -46,10 +46,11 @@ void Sprite::InitSpriteData() {
 	mIndexBuffer->Unbind();
 }
 
-void Sprite::DrawSprite() {
-	Renderer::GetInstance()->Draw(*this);
+void Sprite::Update(float deltaTime) {
+	Component::Update(deltaTime);
+	DrawSprite();
 }
 
-void Sprite::SetPosition(glm::vec3 newPos) {
-	mTransform.position = newPos;
+void Sprite::DrawSprite() {
+	Renderer::GetInstance()->Draw(*this);
 }

@@ -2,25 +2,16 @@
 
 #include <glm/glm.hpp>
 
-#include "Transform.h"
-#include "AABB.h"
-#include "Sprite.h"
+#include "GameObject.h"
 
-class Player {
+class Player : public GameObject {
 private:
-	Transform mTransform;
-	AABB mCollider;
-	Sprite mSprite;
-
 	float mMoveSpeed;
 
 public:
-	Player(Transform nTransform, AABB nCollider, Sprite nSprite, float nMoveSpeed);
+	Player(Transform* nTransform, float nMoveSpeed);
 	~Player();
 
 	void Start();
-	void Update(float deltaTime);
-
-	Transform GetTransform();
-	AABB GetCollider();
+	void Update(float deltaTime) override;
 };

@@ -2,15 +2,10 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include "glm/gtc/matrix_transform.hpp"
-
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 
-#include "Renderer.h"
 #include "Camera.h"
+#include "Renderer.h"
 
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
@@ -76,27 +71,15 @@ int main(void) {
         renderer->Init(camera);
 
         float deltaTime = 0;
-        float prev = 0;
+        float prev = 0; 
 
-        Transform playerTransform(glm::mat4(1.0f), glm::vec3(0.0f), glm::vec3(1.0f));
-        playerTransform.transform = glm::translate(glm::mat4(1.0f), playerTransform.position);
+        Transform* plT = new Transform();
+        Transform* sldT = new Transform(glm::mat4(1.0f), glm::vec3(150.f, 50.f, 0.f), glm::vec3(1.0f));
 
-        AABB playerCollider(playerTransform, glm::vec2(100,100));
-        Shader* playerShader = new Shader("src/shaders/Basic.glsl");
-        Texture* playerTexture = new Texture("res/textures/Pixel.png");
-        Sprite playerSprite(playerShader, playerTexture, playerTransform, glm::vec3(1.0f, 1.0f, 1.0f));
-        
-        Transform solidTransform(glm::mat4(1.0f), glm::vec3(150.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-        solidTransform.transform = glm::translate(glm::mat4(1.0f), solidTransform.position);
-        
-        AABB solidCollider(solidTransform, glm::vec2(100, 100));
-        Shader* solidShader = new Shader("src/shaders/Basic.glsl");
-        Texture* solidTexture = new Texture("res/textures/Pixel.png");
-        Sprite solidSprite(solidShader, solidTexture, solidTransform, glm::vec3(1.0f, 1.0f, 0.0f));
-
-        Player* player = new Player(playerTransform, playerCollider, playerSprite, 200.f);
-        Solid* solid = new Solid(solidTransform, solidCollider, solidSprite);
+        Player* player = new Player(plT, 200.f);
+        Solid* solid = new Solid(sldT);
         std::vector<Solid*> level;
+
         level.push_back(solid);
 
         gameMgr->Init(player, level);

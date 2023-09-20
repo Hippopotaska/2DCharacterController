@@ -1,21 +1,12 @@
 #pragma once
 
-#include "Transform.h"
-#include "AABB.h"
-#include "Sprite.h"
+#include "GameObject.h"
 
-class Solid {
-private:
-	Transform mTransform;
-	AABB mCollider;
-	Sprite mSprite;
-
+class Solid : public GameObject {
 public:
-	Solid(Transform nTransform, AABB nCollider, Sprite nSprite);
+	// TODO: This constructor has to reworked eventually to add more customisation
+	Solid(Transform* nTransform);
 	~Solid();
 
-	void Update(float deltaTime);
-
-	Transform GetTransform();
-	AABB GetCollider();
+	void Update(float deltaTime) override;
 };

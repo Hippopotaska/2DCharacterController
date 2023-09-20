@@ -1,16 +1,11 @@
 #include "AABB.h"
 
-AABB::AABB(Transform nTransform, glm::vec2 nSize) 
-	: mTransform(nTransform), mSize(nSize) {}
+AABB::AABB(Transform nTransform, Transform* nParent, glm::vec2 nSize) 
+	: mSize(nSize), Component(nTransform, nParent) {}
 AABB::~AABB() {}
 
-void AABB::Update(float deltaTime) {}
-void AABB::SetPosition(glm::vec3 newPos) {
-	mTransform.position = newPos;
-}
-
-glm::vec3 AABB::GetPosition() {
-	return mTransform.position;
+void AABB::Update(float deltaTime) {
+	Component::Update(deltaTime);
 }
 
 float AABB::GetWidth() {

@@ -3,10 +3,29 @@
 #include <GLFW/glfw3.h>
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Transform.h"
+#include "AABB.h"
+#include "Sprite.h"
+
 #include "Managers/InputManager.h"
 
-Player::Player(Transform nTransform, AABB nCollider, Sprite nSprite, float nMoveSpeed) 
-	: mTransform(nTransform), mCollider(nCollider), mSprite(nSprite), mMoveSpeed(nMoveSpeed) {}
+Player::Player(Transform* nTransform, float nMoveSpeed) 
+	: mMoveSpeed(nMoveSpeed) {
+	SetTransform(nTransform);
+	Transform* transform = GetTransform();
+
+	AABB* collider = new AABB(*GetTransform(), transform, glm::vec2(100.0f));
+	
+	Shader* shader = new Shader("src/shaders/Basic.glsl");
+	Texture* texture = new Texture("res/textures/Pixel.png");
+	Sprite* sprite = new Sprite(shader, texture, glm::vec3(1.0f), *transform, transform);
+
+	AddComponent(collider);
+	AddComponent(sprite);
+
+	collider->SetParent(transform);
+	sprite->SetParent(transform);
+}
 Player::~Player() {}
 
 void Player::Start() {}
@@ -15,29 +34,17 @@ void Player::Update(float deltaTime) {
 
 	// TODO: Change this to velocity instead of position
 	if (inputMgr->IsKeyHeld(GLFW_KEY_A)) {
-		mTransform.position.x -= mMoveSpeed * deltaTime;
+		GetTransform()->position.x -= mMoveSpeed * deltaTime;
 	}
 	if (inputMgr->IsKeyHeld(GLFW_KEY_D)) {
-		mTransform.position.x += mMoveSpeed * deltaTime;
+		GetTransform()->position.x += mMoveSpeed * deltaTime;
 	}	
 	if (inputMgr->IsKeyHeld(GLFW_KEY_S)) {
-		mTransform.position.y -= mMoveSpeed * deltaTime;
+		GetTransform()->position.y -= mMoveSpeed * deltaTime;
 	}	
 	if (inputMgr->IsKeyHeld(GLFW_KEY_W)) {
-		mTransform.position.y += mMoveSpeed * deltaTime;
+		GetTransform()->position.y += mMoveSpeed * deltaTime;
 	}
 
-	mTransform.transform = glm::translate(glm::mat4(1.0f), mTransform.position);
-
-	mCollider.SetPosition(mTransform.position);
-	mSprite.SetPosition(mTransform.position);
-
-	mSprite.DrawSprite();
-}
-
-Transform Player::GetTransform() {
-	return mTransform;
-}
-AABB Player::GetCollider() {
-	return mCollider;
+	GameObject::Update(deltaTime);
 }

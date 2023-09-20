@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Renderer.h"
+#include "Component.h"
 
-#include "Transform.h"
+#include "Renderer.h"
 #include "Shader.h"
 #include "Texture.h"
 
@@ -11,9 +11,8 @@
 #include "IndexBuffer.h"
 #include "VertexBufferLayout.h"
 
-class Sprite {
+class Sprite : public Component {
 private:
-	Transform mTransform;
 	glm::vec3 mColor;
 	Shader* mShader = nullptr;
 	Texture* mTexture = nullptr;
@@ -26,12 +25,12 @@ private:
 	void InitSpriteData();
 
 public:
-	Sprite(Shader* nShader, Texture* nTexture, Transform nTransform, glm::vec3 nColor);
+	Sprite(Shader* nShader, Texture* nTexture, glm::vec3 nColor, Transform nTransform, Transform* nParent);
 	~Sprite();
 
+	void Update(float deltaTime) override;
 	void DrawSprite();
 
-	inline Transform GetTransform() { return mTransform; }
 	inline Shader* GetShader() { return mShader; }
 	inline VertexArray* GetVA() { return mVertexArray; }
 	inline IndexBuffer* GetIB() { return mIndexBuffer; }

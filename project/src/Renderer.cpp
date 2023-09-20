@@ -42,7 +42,7 @@ void Renderer::Draw(Sprite& spr) {
     Shader* shader = spr.GetShader();
     shader->Bind();
 
-    shader->SetUniformMat4("u_ModelViewProjection", mCamera->GetProjectionViewMatrix() * spr.GetTransform().transform);
+    shader->SetUniformMat4("u_ModelViewProjection", mCamera->GetProjectionViewMatrix() * spr.GetParent()->transform);
     spr.GetVA()->Bind();
     spr.GetIB()->Bind();
 

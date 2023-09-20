@@ -5,6 +5,8 @@
 #include "Player.h"
 #include "Solid.h"
 
+#include "AABB.h"
+
 GameManager::GameManager() 
 	: mPlayerRef(nullptr) {}
 
@@ -20,16 +22,16 @@ void GameManager::Update(float deltaTime) {
 }
 
 void GameManager::CheckCollisions(Solid* solid) {
-	AABB plColl = mPlayerRef->GetCollider();
-	AABB slColl = solid->GetCollider();
+	AABB* plColl = mPlayerRef->GetComponent<AABB>();
+	AABB* slColl = solid->GetComponent<AABB>();
 
-	glm::vec3 plPos = plColl.GetPosition();
-	glm::vec3 slPos = slColl.GetPosition();
+	glm::vec3 plPos = plColl->GetPosition();
+	glm::vec3 slPos = slColl->GetPosition();
 
-	if (plPos.x < slPos.x + slColl.GetWidth() &&
-		plPos.x + plColl.GetWidth() > slPos.x &&
-		plPos.y < slPos.y + slColl.GetHeight() &&
-		plPos.y + plColl.GetHeight() > slPos.y) {
+	if (plPos.x < slPos.x + slColl->GetWidth() &&
+		plPos.x + plColl->GetWidth() > slPos.x &&
+		plPos.y < slPos.y + slColl->GetHeight() &&
+		plPos.y + plColl->GetHeight() > slPos.y) {
 		std::cout << "Collision happening!" << std::endl;
 	}
 }
