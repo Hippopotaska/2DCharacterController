@@ -6,8 +6,7 @@
 
 // TODO: This constructor has to reworked eventually to add more customisation
 Solid::Solid(Transform* nTransform) {
-	SetTransform(nTransform);
-	Transform* transform = GetTransform();
+	transform = nTransform;
 
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
 

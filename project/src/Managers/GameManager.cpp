@@ -25,8 +25,8 @@ void GameManager::CheckCollisions(Solid* solid) {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = solid->GetComponent<AABB>();
 
-	glm::vec3 plPos = plColl->GetPosition();
-	glm::vec3 slPos = slColl->GetPosition();
+	glm::vec3 plPos = *plColl->transform.GetPosition();
+	glm::vec3 slPos = *slColl->transform.GetPosition();
 
 	if (plPos.x < slPos.x + slColl->GetWidth() &&
 		plPos.x + plColl->GetWidth() > slPos.x &&

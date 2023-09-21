@@ -5,28 +5,25 @@
 #include <glm/glm.hpp>
 #include "glm/gtc/matrix_transform.hpp"
 
-struct Transform {
-	glm::mat4 transform;
-	glm::vec3 position;
-	glm::vec3 scale;
+class Transform {
+private:
+	glm::mat4 mTransform;
+	glm::vec3 mPosition;
+	glm::vec3 mScale;
+	
+	void Init(glm::mat4 nTransform, glm::vec3 nPosition, glm::vec3 nScale);
 
-	Transform() {
-		transform = glm::mat4(1.0f);
-		position = glm::vec3(0.0f);
-		scale = glm::vec3(1.0f);
+public:
+	Transform();
+	Transform(Transform& nTransform);
+	Transform(glm::mat4 nTransform, glm::vec3 nPosition, glm::vec3 nScale);
 
-		transform = glm::translate(glm::mat4(1.0f), position);
-	}
+	void Translate();
 
-	Transform(glm::mat4 nTransform, glm::vec3 nPosition, glm::vec3 nScale) {
-		transform = nTransform;
-		position = nPosition;
-		scale = nScale;
-
-		transform = glm::translate(glm::mat4(1.0f), position);
-	}
-
-	Transform(Transform& nTransform) {
-		Transform(nTransform.transform, nTransform.position, nTransform.scale);
-	}
+	glm::mat4* GetTransform();
+	void SetTransform(glm::mat4 newTransform);
+	glm::vec3* GetPosition();
+	void SetPosition(glm::vec3 newPosition);
+	glm::vec3* GetScale();
+	void SetScale(glm::vec3 newScale);
 };

@@ -6,22 +6,16 @@
 
 class GameObject {
 private:
-	Transform* mTransform;
 	std::vector<Component*> mComponents{};
 
 public:
+	Transform* transform;
+
 	virtual void Update(float deltaTime) {
 		for (auto& component : mComponents) {
 			if (component)
 				component->Update(deltaTime);
 		}
-	}
-
-	void SetTransform(Transform* nTransform) {
-		mTransform = nTransform;
-	}
-	Transform* GetTransform() {
-		return mTransform;
 	}
 
 	template<typename T>

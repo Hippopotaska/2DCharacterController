@@ -34,6 +34,4 @@ public:
 	inline Shader* GetShader() { return mShader; }
 	inline VertexArray* GetVA() { return mVertexArray; }
 	inline IndexBuffer* GetIB() { return mIndexBuffer; }
-
-	void SetPosition(glm::vec3 newPos);
 };
