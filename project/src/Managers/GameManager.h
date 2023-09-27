@@ -19,7 +19,8 @@ public:
 
 	void Update(float deltaTime);
 
-	void CheckCollisions(Solid* solid);
+	void CheckCollisions();
+	void ResolveCollision(Solid* solid);
 
 	static GameManager* GetInstance();
 
