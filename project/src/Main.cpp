@@ -74,7 +74,7 @@ int main(void) {
         float prev = 0; 
 
         Transform* plT = new Transform();
-        Transform* sldT = new Transform(glm::mat4(1.0f), glm::vec3(200.f, 50.f, 0.f), glm::vec3(1.0f));
+        Transform* sldT = new Transform(glm::mat4(1.0f), glm::vec3(200.f, 50.f, 0.f), glm::vec3(2.0f));
 
         Player* player = new Player(plT, 200.f);
         Solid* solid = new Solid(sldT);

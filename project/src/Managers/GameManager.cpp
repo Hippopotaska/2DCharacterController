@@ -30,18 +30,14 @@ void GameManager::Update(float deltaTime) {
 void GameManager::CheckCollisions() {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = nullptr;
-	
-	glm::vec3 plPos = *plColl->transform.GetPosition();
-	glm::vec3 slPos = glm::vec3(0.0f);
 
 	for (size_t i = 0; i < mLevel.size(); i++)
 	{
 		slColl = mLevel[i]->GetComponent<AABB>();
-		slPos = *mLevel[i]->transform->GetPosition();
-		if (plPos.x < slPos.x + slColl->GetWidth() &&
-			plPos.x + plColl->GetWidth() > slPos.x &&
-			plPos.y < slPos.y + slColl->GetHeight() &&
-			plPos.y + plColl->GetHeight() > slPos.y) {
+		if (plColl->min.x < slColl->max.x &&
+			plColl->max.x > slColl->min.x &&
+			plColl->min.y < slColl->max.y &&
+			plColl->max.y > slColl->min.y) {
 			ResolveCollision(mLevel[i]);
 		}
 	}
@@ -64,7 +60,6 @@ void GameManager::ResolveCollision(Solid* solid) {
 	float intersection = FLT_MAX;
 	glm::vec2 bestAxis = glm::vec2(0.0f);
 
-	// Loop through all sides and find the best to use as normal
 	for (int i = 0; i < 4; i++) {
 		if (distances[i] < intersection) {
 			intersection = distances[i];
@@ -72,16 +67,11 @@ void GameManager::ResolveCollision(Solid* solid) {
 		}
 	}
 
-	// bestAxis == Normal of the collision
-	// Now test moving the player out of the 
 	std::cout << "Collision Normal [" << bestAxis.x << ", " << bestAxis.y << "]" << std::endl;
 
 	glm::vec3 fixDir = glm::vec3(bestAxis.x, bestAxis.y, 0.0f);
-	glm::vec3 colFix = *mPlayerRef->transform->GetPosition() + (fixDir * 5.0f);
+	glm::vec3 colFix = *mPlayerRef->transform->GetPosition() + (fixDir * 10.0f);
 	mPlayerRef->transform->SetPosition(colFix);
-
-	// Move player with the normal
-	
 }
 
 GameManager* GameManager::GetInstance() {

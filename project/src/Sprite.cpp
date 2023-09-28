@@ -8,10 +8,10 @@ Sprite::~Sprite() {}
 
 void Sprite::InitSpriteData() {
 	float positions[] = {		// Vertex data
-	-50.0f, -50.0f, 0.0f, 0.0f,
-	 50.0f, -50.0f, 1.0f, 0.0f,
-	 50.0f,  50.0f, 1.0f, 1.0f,
-	-50.0f,  50.0f, 0.0f, 1.0f
+	 -50.0f, -50.0f, 0.0f, 0.0f,
+	  50.0f, -50.0f, 1.0f, 0.0f,
+	  50.0f,  50.0f, 1.0f, 1.0f,
+	 -50.0f,  50.0f, 0.0f, 1.0f
 	};
 
 	unsigned int indices[] = {	// Index Buffer
@@ -47,8 +47,8 @@ void Sprite::InitSpriteData() {
 }
 
 void Sprite::Update(float deltaTime) {
-	Component::Update(deltaTime);
 	DrawSprite();
+	Component::Update(deltaTime);
 }
 
 void Sprite::DrawSprite() {
