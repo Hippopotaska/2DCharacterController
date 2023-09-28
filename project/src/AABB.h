@@ -2,6 +2,8 @@
 
 #include "Component.h"
 
+
+
 class AABB : public Component {
 private:
 	glm::vec2 mSize;

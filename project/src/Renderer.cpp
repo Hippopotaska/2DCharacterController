@@ -22,7 +22,9 @@ bool GLLogCall(const char* function, const char* file, int line) {
 
 // Renderer class functions
 Renderer::Renderer() 
-    : mCamera(nullptr) {}
+    : mCamera(nullptr) {
+    GLCall(glClearColor(0.42f, 0.42f, 0.42f, 1));
+}
 
 Renderer* Renderer::GetInstance() {
     if (!mInstance)

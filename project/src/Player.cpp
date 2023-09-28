@@ -16,7 +16,7 @@ Player::Player(Transform* nTransform, float nMoveSpeed)
 	
 	Shader* shader = new Shader("src/shaders/Basic.glsl");
 	Texture* texture = new Texture("res/textures/Pixel.png");
-	Sprite* sprite = new Sprite(shader, texture, glm::vec3(1.0f), *transform, transform);
+	Sprite* sprite = new Sprite(shader, texture, mDefaultColor, *transform, transform);
 
 	AddComponent(collider);
 	AddComponent(sprite);

@@ -35,7 +35,7 @@ void Sprite::InitSpriteData() {
 	mIndexBuffer->Init(indices, 6);
 
 	mShader->Bind();
-	mShader->SetUniform4f("u_Color", mColor.x, mColor.y, mColor.z, 1.0f);
+	mShader->SetUniform4f("u_Color", mColor.x / 255, mColor.y / 255, mColor.z / 255, 1.0f);
 
 	mTexture->Bind();
 	mShader->SetUniform1i("u_Texture", 0);
