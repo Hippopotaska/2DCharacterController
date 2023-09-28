@@ -66,12 +66,10 @@ void GameManager::ResolveCollision(Solid* solid) {
 			bestAxis = faces[i];
 		}
 	}
-
-	std::cout << "Collision Normal [" << bestAxis.x << ", " << bestAxis.y << "]" << std::endl;
-
-	glm::vec3 fixDir = glm::vec3(bestAxis.x, bestAxis.y, 0.0f);
-	glm::vec3 colFix = *mPlayerRef->transform->GetPosition() + (fixDir * 10.0f);
-	mPlayerRef->transform->SetPosition(colFix);
+	// TODO: Super jank, doesn't factor in the fact that player might not be a 1:1 box
+	glm::vec2 colPos = glm::vec2(a->transform.GetPosition()->x, a->transform.GetPosition()->y) + ((bestAxis * -1.0f) * (a->GetWidth() * 0.5f));
+	CollisionInfo info = CollisionInfo(colPos, bestAxis);
+	mPlayerRef->OnCollide(info);
 }
 
 GameManager* GameManager::GetInstance() {

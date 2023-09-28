@@ -2,7 +2,15 @@
 
 #include "Component.h"
 
+struct CollisionInfo {
+	glm::vec2 position;
+	glm::vec2 normal;
 
+	CollisionInfo(glm::vec2 newPosition, glm::vec2 newNormal) {
+		position = newPosition;
+		normal = newNormal;
+	}
+};
 
 class AABB : public Component {
 private:

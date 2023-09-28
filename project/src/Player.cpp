@@ -1,5 +1,7 @@
 #include "Player.h"
 
+#include <iostream>
+
 #include <GLFW/glfw3.h>
 #include "glm/gtc/matrix_transform.hpp"
 
@@ -31,22 +33,40 @@ void Player::Update(float deltaTime) {
 	auto inputMgr = InputManager::GetInstance();
 	mVelocity = glm::vec2(0.0f);
 
-	// TODO: Change this to velocity instead of position
 	if (inputMgr->IsKeyHeld(GLFW_KEY_A)) {
 		mVelocity.x -= mMoveSpeed * deltaTime;
 	}
 	if (inputMgr->IsKeyHeld(GLFW_KEY_D)) {
 		mVelocity.x += mMoveSpeed * deltaTime;
 	}	
-	if (inputMgr->IsKeyHeld(GLFW_KEY_S)) {
-		mVelocity.y -= mMoveSpeed * deltaTime;
-	}	
-	if (inputMgr->IsKeyHeld(GLFW_KEY_W)) {
-		mVelocity.y += mMoveSpeed * deltaTime;
+
+	if (inputMgr->IsKeyHeld(GLFW_KEY_SPACE) && mGrounded) {
+		mVelocity.y += mJumpPower * deltaTime;
+		mGrounded = false;
 	}
+
+	if (!mGrounded) {
+		mVelocity.y += mVelocity.y <= mMaxFall ? mMaxFall : mGravity * deltaTime;
+	}
+
 
 	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.f);
 	transform->Translate();
 
+	std::cout << "[" << transform->GetPosition()->x << ", " << transform->GetPosition()->y << "] - Grounded => " << mGrounded << std::endl;
+
 	GameObject::Update(deltaTime);
+}
+
+void Player::OnCollide(CollisionInfo colInfo) {
+	glm::vec3 fix = glm::vec3(mVelocity.x * 1.025f, mVelocity.y * 1.025f, 0);
+	fix *= glm::vec3(colInfo.normal.x, colInfo.normal.y, 0);
+	if (colInfo.normal.x == 1 || colInfo.normal.y == 1)
+		fix *= -1.f; // TODO: This bugs me way too much. Needs to be researched if there is a fix.
+
+	*transform->GetPosition() += fix;
+
+	if (colInfo.normal.y == 1.0f && !mGrounded) {
+		mGrounded = true;
+	}
 }
