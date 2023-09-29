@@ -34,23 +34,23 @@ void Player::Update(float deltaTime) {
 	mVelocity = glm::vec2(0.0f);
 
 	if (inputMgr->IsKeyHeld(GLFW_KEY_A)) {
-		mVelocity.x -= mMoveSpeed * deltaTime;
+		mVelocity.x -= mMoveSpeed;
 	}
 	if (inputMgr->IsKeyHeld(GLFW_KEY_D)) {
-		mVelocity.x += mMoveSpeed * deltaTime;
+		mVelocity.x += mMoveSpeed;
 	}	
 
 	if (inputMgr->IsKeyHeld(GLFW_KEY_SPACE) && mGrounded) {
-		mVelocity.y += mJumpPower * deltaTime;
+		mVelocity.y = mJumpPower;
 		mGrounded = false;
 	}
 
 	if (!mGrounded) {
-		mVelocity.y += mVelocity.y <= mMaxFall ? mMaxFall : mGravity * deltaTime;
+		mVelocity.y += mVelocity.y <= mMaxFall ? mMaxFall : mGravity;
 	}
 
 
-	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.f);
+	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.f) * deltaTime;
 	transform->Translate();
 
 	std::cout << "[" << transform->GetPosition()->x << ", " << transform->GetPosition()->y << "] - Grounded => " << mGrounded << std::endl;

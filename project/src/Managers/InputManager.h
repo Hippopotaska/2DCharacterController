@@ -28,7 +28,10 @@ public:
 
 	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void KeyCallbackDispatcher(GLFWwindow* window, int key, int scancode, int action, int mods);
+
 	bool IsKeyHeld(int key);
+	bool KeyIsPressed(int key);
+	bool KeyIsReleased(int key);
 
 	InputManager(InputManager& other) = delete;
 	void operator=(const InputManager&) = delete;
