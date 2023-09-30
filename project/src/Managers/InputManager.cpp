@@ -14,17 +14,20 @@ InputManager* InputManager::GetInstance() {
     return mInstance;
 }
 
-void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+bool InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (!mKeys.contains(key))
-        return;
+        return false;
     
     if (action == GLFW_PRESS) {
         mKeys.at(key) = true;
-
+        return true;
     }
     else if (action == GLFW_RELEASE) {
         mKeys.at(key) = false;
-
+        return true;
+    }
+    else {
+        return false;
     }
 }
 
@@ -32,12 +35,12 @@ void InputManager::KeyCallbackDispatcher(GLFWwindow* window, int key, int scanco
     mInstance->KeyCallback(window, key, scancode, action, mods);
 }
 
-bool InputManager::IsKeyHeld(int key) {
+bool InputManager::KeyHeld(int key) {
     return mKeys.at(key);
 }
-bool InputManager::KeyIsPressed(int key) {
-    
+bool InputManager::KeyPressed(int key) {
+    return mInstance->KeyCallback(mWindow, key, 1, GLFW_PRESS, 1);
 }
-bool InputManager::KeyIsReleased(int key) {
-
+bool InputManager::KeyReleased(int key) {
+    return mInstance->KeyCallback(mWindow, key, 1, GLFW_RELEASE, 1);
 }

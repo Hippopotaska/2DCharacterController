@@ -97,7 +97,7 @@ int main(void) {
             renderer->Clear();
             gameMgr->Update(deltaTime);
 
-            if (inputMgr->IsKeyHeld(GLFW_KEY_ESCAPE)) {
+            if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
             }
 
