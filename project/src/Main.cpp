@@ -70,32 +70,31 @@ int main(void) {
         Renderer* renderer = renderer->GetInstance();
         renderer->Init(camera);
 
-        float deltaTime = 0;
-        float prev = 0; 
-
         Transform* plT = new Transform();
-        Transform* sldT = new Transform(glm::mat4(1.0f), glm::vec3(0.f, -150.f, 0.f), glm::vec3(5.0f, 0.85f, 1.0f));
+        Transform* sldT1 = new Transform(glm::mat4(1.0f), glm::vec3(0.f, -150.f, 0.f), glm::vec3(5.0f, 0.85f, 1.0f));
+        Transform* sldT2 = new Transform(glm::mat4(1.0f), glm::vec3(100.f, -100.f, 0.f), glm::vec3(1.5f, 1.0f, 1.0f));
+        Transform* sldT3 = new Transform(glm::mat4(1.0f), glm::vec3(0.f, 150.f, 0.f), glm::vec3(4.f, 0.75f, 1.0f));
 
-        Player* player = new Player(plT, 200.f);
-        Solid* solid = new Solid(sldT);
+        Player* player = new Player(plT, 50.f);
+        Solid* solid1 = new Solid(sldT1);
+        Solid* solid2 = new Solid(sldT2);
+        Solid* solid3 = new Solid(sldT3);
+        
         std::vector<Solid*> level;
-
-        level.push_back(solid);
+        level.push_back(solid1);
+        level.push_back(solid2);
+        level.push_back(solid3);
 
         gameMgr->Init(player, level);
-
+        
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
             /* Poll for and process events */
             GLCall(glfwPollEvents());
             GLCall(glfwSetKeyCallback(WindowData.window, InputManager::KeyCallbackDispatcher));
 
-            auto elap = (float)glfwGetTime();
-            deltaTime = elap - prev;
-            prev = elap;
-
             renderer->Clear();
-            gameMgr->Update(deltaTime);
+            gameMgr->Update();
 
             if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;

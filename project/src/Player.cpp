@@ -10,6 +10,7 @@
 #include "Sprite.h"
 
 #include "Managers/InputManager.h"
+#include "Managers/GameManager.h"
 
 Player::Player(Transform* nTransform, float nMoveSpeed) 
 	: mMoveSpeed(nMoveSpeed), mVelocity(glm::vec2(0.0f)) {
@@ -31,14 +32,49 @@ Player::~Player() {}
 void Player::Start() {}
 void Player::Update(float deltaTime) {
 	auto inputMgr = InputManager::GetInstance();
-	mVelocity = glm::vec2(0.0f);
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
 		mVelocity.x -= mMoveSpeed;
+		if (mVelocity.x < -mMaxMoveVelocity) {
+			mVelocity.x = -mMaxMoveVelocity;
+		}
 	}
 	if (inputMgr->KeyHeld(GLFW_KEY_D)) {
 		mVelocity.x += mMoveSpeed;
+		if (mVelocity.x > mMaxMoveVelocity) {
+			mVelocity.x = mMaxMoveVelocity;
+		}
 	}	
+
+	if (!inputMgr->KeyHeld(GLFW_KEY_D) && !inputMgr->KeyHeld(GLFW_KEY_A)) {
+		if (mVelocity.x != 0) {
+			if (mVelocity.x > 0) {
+				mVelocity.x -= mFriction * deltaTime;
+				if (mVelocity.x < 0)
+					mVelocity.x = 0;
+			}
+			else if (mVelocity.x < 0) {
+				mVelocity.x += mFriction * deltaTime;
+				if (mVelocity.x > 0)
+					mVelocity.x = 0;
+			}
+		}
+	}
+
+	if (inputMgr->KeyHeld(GLFW_KEY_R)) {
+		if (!mReset) {
+			mCurTimer += deltaTime;
+			if (mCurTimer >= mResetTime) {
+				transform->SetPosition(glm::vec3(0,0,0));
+				mReset = true;
+				mCurTimer = 0;
+			}
+		}
+	}
+	else {
+		mReset = false;
+		mCurTimer = 0;
+	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
 		mVelocity.y = mJumpPower;
@@ -46,27 +82,39 @@ void Player::Update(float deltaTime) {
 	}
 
 	if (!mGrounded) {
-		mVelocity.y += mVelocity.y <= mMaxFall ? mMaxFall : mGravity;
+		mVelocity.y += mGravity;
+		if (mVelocity.y < mMaxFall)
+			mVelocity.y = mMaxFall;
 	}
 
-
-	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.f) * deltaTime;
+	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.f);
 	transform->Translate();
 
-	std::cout << "[" << transform->GetPosition()->x << ", " << transform->GetPosition()->y << "] - Grounded => " << mGrounded << std::endl;
+	std::cout << "Position [" << transform->GetPosition()->x << ", " << transform->GetPosition()->y << "]" <<
+	 "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
 	GameObject::Update(deltaTime);
+	mGrounded = false; 
+	// There is no simple way of adding another trigger type collider, 
+	// so instead we make the player not grounded, so they fall for 1 frame
+	// and check if there is ground under
 }
 
 void Player::OnCollide(CollisionInfo colInfo) {
-	glm::vec3 fix = glm::vec3(mVelocity.x * 1.025f, mVelocity.y * 1.025f, 0);
-	fix *= glm::vec3(colInfo.normal.x, colInfo.normal.y, 0);
-	if (colInfo.normal.x == 1 || colInfo.normal.y == 1)
-		fix *= -1.f; // TODO: This bugs me way too much. Needs to be researched if there is a fix.
+	glm::vec3 fixVec = glm::vec3(0.0f);
+	float delta = GameManager::GetInstance()->GameTime->delta;
 
-	*transform->GetPosition() += fix;
-
-	if (colInfo.normal.y == 1.0f && !mGrounded) {
-		mGrounded = true;
+	if (colInfo.normal.x != 0) { // Horizontal collision
+		fixVec.x = colInfo.intersectionDepth * colInfo.normal.x + (mVelocity.x * -1.05);
+		mVelocity.x = 0;
 	}
+	if (colInfo.normal.y != 0) { // Vertical collision
+		fixVec.y = colInfo.intersectionDepth * colInfo.normal.y + (mVelocity.y * -1.05);
+		if (colInfo.normal.y == 1.0f && !mGrounded) {
+			mGrounded = true;
+			mVelocity.y = 0;
+		}
+	}
+
+	*transform->GetPosition() += fixVec * delta;
 }

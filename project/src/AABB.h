@@ -3,12 +3,12 @@
 #include "Component.h"
 
 struct CollisionInfo {
-	glm::vec2 position;
-	glm::vec2 normal;
+	glm::vec2 normal = glm::vec2(0.0f);
+	float intersectionDepth = 0.0f;
 
-	CollisionInfo(glm::vec2 newPosition, glm::vec2 newNormal) {
-		position = newPosition;
+	CollisionInfo(glm::vec2 newNormal, float newIntDepth) {
 		normal = newNormal;
+		intersectionDepth = newIntDepth;
 	}
 };
 

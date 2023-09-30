@@ -14,6 +14,7 @@ private:
 		{87, false},	// W
 
 		{32, false},	// Space
+		{82, false},	// R
 	};
 
 	inline static InputManager* mInstance = nullptr;

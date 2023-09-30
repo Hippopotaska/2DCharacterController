@@ -11,22 +11,21 @@ GameManager::GameManager()
 	: mPlayerRef(nullptr) {}
 
 void GameManager::Init(Player* player, std::vector<Solid*> level) {
+	GameTime = new Time();
+	
 	mPlayerRef = player;
 	mLevel = level;
 }
 
-void GameManager::Update(float deltaTime) {
+void GameManager::Update() {
+	GameTime->UpdateTime();
 	CheckCollisions();
 
-	mPlayerRef->Update(deltaTime);
+	mPlayerRef->Update(GameTime->delta);
 	for (size_t i = 0; i < mLevel.size(); i++)
-		mLevel[i]->Update(deltaTime);
+		mLevel[i]->Update(GameTime->delta);
 }
 
-// https://gamedev.stackexchange.com/questions/12875/how-do-i-determine-the-collision-normal-in-an-axis-aligned-bounding-box-collisio Simple explanation
-// https://www.gamedev.net/tutorials/programming/general-and-gameplay-programming/swept-aabb-collision-detection-and-response-r3084/ Could think about implementing this?
-// https://github.com/Hippopotaska/CharacterController/blob/main/Assets/Resources/Scripts/CharacterController.cs
-// https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-resolution
 void GameManager::CheckCollisions() {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = nullptr;
@@ -66,9 +65,8 @@ void GameManager::ResolveCollision(Solid* solid) {
 			bestAxis = faces[i];
 		}
 	}
-	// TODO: Super jank, doesn't factor in the fact that player might not be a 1:1 box
-	glm::vec2 colPos = glm::vec2(a->transform.GetPosition()->x, a->transform.GetPosition()->y) + ((bestAxis * -1.0f) * (a->GetWidth() * 0.5f));
-	CollisionInfo info = CollisionInfo(colPos, bestAxis);
+
+	CollisionInfo info = CollisionInfo(bestAxis, intersection);
 	mPlayerRef->OnCollide(info);
 }
 
