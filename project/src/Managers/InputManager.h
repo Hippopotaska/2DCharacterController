@@ -1,6 +1,5 @@
 #pragma once
 #include <GLFW/glfw3.h>
-
 #include <unordered_map>
 
 class InputManager {
@@ -26,7 +25,7 @@ public:
 
 	static InputManager* GetInstance();
 
-	bool KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	static void KeyCallbackDispatcher(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 	bool KeyHeld(int key);
