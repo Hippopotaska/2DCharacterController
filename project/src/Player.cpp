@@ -87,11 +87,11 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.f);
-	transform->Translate();
 
-	std::cout << "Position [" << transform->GetPosition()->x << ", " << transform->GetPosition()->y << "]" <<
-	 "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
+	//*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.f);
+	//transform->Translate();
+
+	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
 	GameObject::Update(deltaTime);
 	mGrounded = false; 
@@ -100,7 +100,8 @@ void Player::Update(float deltaTime) {
 	// and check if there is ground under
 }
 void Player::LateUpdate(float deltaTime) {
-
+	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
+	transform->Translate();
 }
 
 void Player::OnCollide(CollisionInfo colInfo) {
@@ -112,14 +113,41 @@ void Player::OnCollide(CollisionInfo colInfo) {
 		mVelocity.x = 0;
 	}
 	else if (colInfo.normal.y != 0) { // Vertical collision
+		float yVal = colInfo.normal.y == 1.0f ? colInfo.collidedObject.max.y : colInfo.collidedObject.min.y;
 		fixVec.y = colInfo.intersectionDepth * colInfo.normal.y + mVelocity.y * -1;
 		if (colInfo.normal.y == 1.0f && !mGrounded) {
 			mGrounded = true;
 		}
 		mVelocity.y = 0;
 	}
+	
+	mVelocity.y += fixVec.y;
+	mVelocity.x += fixVec.x;
 
-	// TODO: Test adding the intersectionDepth straight to the objects position
+	//glm::vec3 fix = glm::vec3(0.0f);
+	//float delta = GameManager::GetInstance()->GameTime->delta;
 
-	*transform->GetPosition() += fixVec * delta;
+	//if (colInfo.normal.y != 0) { // Vertical collision resolve
+	//	if (colInfo.normal.y == 1) {
+	//		fix.y = mVelocity.y + colInfo.intersectionDepth;
+	//		if (!mGrounded)
+	//			mGrounded = true;
+	//	} else {
+	//		fix.y = mVelocity.y - colInfo.intersectionDepth;
+	//	}
+	//	fix.y *= colInfo.normal.y;
+	//	mVelocity.y = 0;
+	//}
+	//if (colInfo.normal.x != 0) { // Horizontal collision resolve
+	//	if (colInfo.normal.x == 1) {
+	//		fix.x = mVelocity.x + colInfo.intersectionDepth;
+	//	} else {
+	//		fix.x = -mVelocity.x - colInfo.intersectionDepth;
+	//	}
+	//	fix.x *= colInfo.normal.x;
+	//	mVelocity.x = 0;
+	//}
+
+	//mVelocity.y += fix.y;
+	//mVelocity.x += fix.x;
 }

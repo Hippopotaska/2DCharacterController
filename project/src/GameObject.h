@@ -18,7 +18,10 @@ public:
 		}
 	}
 	virtual void LateUpdate(float deltaTime) {
-		
+		for (auto& component : mComponents) {
+			if (component)
+				component->LateUpdate(deltaTime);
+		}
 	}
 
 	template<typename T>

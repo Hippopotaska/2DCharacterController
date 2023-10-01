@@ -19,12 +19,11 @@ void GameManager::Init(Player* player, std::vector<Solid*> level) {
 
 void GameManager::Update() {
 	GameTime->UpdateTime();
-	CheckCollisions();
 
 	mPlayerRef->Update(GameTime->delta);
 	for (size_t i = 0; i < mLevel.size(); i++)
 		mLevel[i]->Update(GameTime->delta);
-
+	CheckCollisions();
 	mPlayerRef->LateUpdate(GameTime->delta);
 }
 
@@ -68,7 +67,7 @@ void GameManager::ResolveCollision(Solid* solid) {
 		}
 	}
 
-	CollisionInfo info = CollisionInfo(bestAxis, intersection);
+	CollisionInfo info = CollisionInfo(bestAxis, intersection, *b);
 	mPlayerRef->OnCollide(info);
 }
 

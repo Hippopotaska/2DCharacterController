@@ -1,5 +1,6 @@
 #include "AABB.h"
 
+AABB::AABB () {}
 AABB::AABB(Transform nTransform, Transform* nParent, glm::vec2 nSize) 
 	: mSize(nSize), Component(nTransform, nParent) {
 	mSize.x *= transform.GetScale()->x;
