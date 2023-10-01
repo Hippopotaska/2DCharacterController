@@ -31,6 +31,7 @@ public:
 
 	void Start();
 	void Update(float deltaTime) override;
+	void LateUpdate(float deltaTime) override;
 
 	void OnCollide(struct CollisionInfo colInfo);
 };

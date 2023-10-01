@@ -17,6 +17,9 @@ public:
 				component->Update(deltaTime);
 		}
 	}
+	virtual void LateUpdate(float deltaTime) {
+		
+	}
 
 	template<typename T>
 	inline void AddComponent(T* newComp) {

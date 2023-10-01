@@ -99,22 +99,27 @@ void Player::Update(float deltaTime) {
 	// so instead we make the player not grounded, so they fall for 1 frame
 	// and check if there is ground under
 }
+void Player::LateUpdate(float deltaTime) {
+
+}
 
 void Player::OnCollide(CollisionInfo colInfo) {
 	glm::vec3 fixVec = glm::vec3(0.0f);
 	float delta = GameManager::GetInstance()->GameTime->delta;
 
 	if (colInfo.normal.x != 0) { // Horizontal collision
-		fixVec.x = colInfo.intersectionDepth * colInfo.normal.x + (mVelocity.x * -1.05);
+		fixVec.x = colInfo.intersectionDepth * colInfo.normal.x + mVelocity.x * -1;
 		mVelocity.x = 0;
 	}
-	if (colInfo.normal.y != 0) { // Vertical collision
-		fixVec.y = colInfo.intersectionDepth * colInfo.normal.y + (mVelocity.y * -1.05);
+	else if (colInfo.normal.y != 0) { // Vertical collision
+		fixVec.y = colInfo.intersectionDepth * colInfo.normal.y + mVelocity.y * -1;
 		if (colInfo.normal.y == 1.0f && !mGrounded) {
 			mGrounded = true;
-			mVelocity.y = 0;
 		}
+		mVelocity.y = 0;
 	}
+
+	// TODO: Test adding the intersectionDepth straight to the objects position
 
 	*transform->GetPosition() += fixVec * delta;
 }

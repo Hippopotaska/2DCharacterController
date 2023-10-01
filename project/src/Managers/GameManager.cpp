@@ -24,6 +24,8 @@ void GameManager::Update() {
 	mPlayerRef->Update(GameTime->delta);
 	for (size_t i = 0; i < mLevel.size(); i++)
 		mLevel[i]->Update(GameTime->delta);
+
+	mPlayerRef->LateUpdate(GameTime->delta);
 }
 
 void GameManager::CheckCollisions() {
