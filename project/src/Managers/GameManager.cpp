@@ -31,6 +31,7 @@ void GameManager::Update() {
 	Renderer::GetInstance()->MoveCamera(*mPlayerRef->transform->GetPosition());
 }
 
+#pragma region Collision
 void GameManager::CheckCollisions() {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = nullptr;
@@ -74,6 +75,7 @@ void GameManager::ResolveCollision(Solid* solid) {
 	CollisionInfo info = CollisionInfo(bestAxis, intersection, *b);
 	mPlayerRef->OnCollide(info);
 }
+#pragma endregion
 
 GameManager* GameManager::GetInstance() {
 	if (!mInstance)

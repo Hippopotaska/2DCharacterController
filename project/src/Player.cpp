@@ -87,23 +87,22 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-
 	//*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.f);
 	//transform->Translate();
 
 	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
 	mGrounded = false; 
-	// There is no simple way of adding another trigger type collider, 
+	// There is no simple way of adding another collider, 
 	// so instead we make the player not grounded, so they fall for 1 frame
 	// and check if there is ground under
+	// Probably better solution would be to test with own collider if there is ground underneath
+	// Like this; move collider down couple of pixels, if there is no ground then set mGrounded to be false
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
 	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 	transform->Translate();
-
-	nextPos = *transform->GetPosition() + glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 }
 
 void Player::OnCollide(CollisionInfo colInfo) {
@@ -122,12 +121,12 @@ void Player::OnCollide(CollisionInfo colInfo) {
 			if (!mGrounded)
 				mGrounded = true;
 		}
-		fix.y = colInfo.intersectionDepth *  0.375f;
+		fix.y = (colInfo.intersectionDepth * 0.2f) + (mVelocity.y * colInfo.normal.y * delta);
 		fix.y *= colInfo.normal.y;
 		mVelocity.y = 0;
 	}
 	if (colInfo.normal.x != 0) { // Horizontal collision resolve
-		fix.x =  colInfo.intersectionDepth *  0.375f;
+		fix.x =  (colInfo.intersectionDepth * 0.2f) + (mVelocity.x * colInfo.normal.x * delta);
 		fix.x *= colInfo.normal.x;
 		mVelocity.x = 0;
 	}
@@ -141,4 +140,7 @@ glm::vec3 Player::GetMoveDirection() {
 		norm = glm::normalize(mVelocity);
 	}
 	return glm::vec3(norm.x, norm.y, 0.f);
+}
+glm::vec3 Player::GetVelocity() {
+	return glm::vec3(mVelocity.x, mVelocity.y, 0.0f);
 }

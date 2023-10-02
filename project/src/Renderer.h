@@ -18,8 +18,8 @@ class Renderer {
 private:
     Camera* mCamera;
 
-    float mSmoothMult = 4.25f;
-    float mLookAheadMult = 25.f;
+    float mSmoothMult = 8.25f;
+    float mLookAheadMult = 50.f;
     
     inline static Renderer* mInstance = nullptr;
 

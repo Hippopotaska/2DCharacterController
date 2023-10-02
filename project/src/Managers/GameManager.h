@@ -2,6 +2,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <vector>
 
@@ -27,6 +28,8 @@ private:
 
 	Player* mPlayerRef;
 	std::vector<Solid*> mLevel;
+
+	float mMaxCollisionTestRange = 3500.f;
 
 public:
 	Time* GameTime = nullptr;
