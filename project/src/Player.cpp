@@ -93,61 +93,52 @@ void Player::Update(float deltaTime) {
 
 	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
-	GameObject::Update(deltaTime);
 	mGrounded = false; 
 	// There is no simple way of adding another trigger type collider, 
 	// so instead we make the player not grounded, so they fall for 1 frame
 	// and check if there is ground under
+	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
 	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 	transform->Translate();
+
+	nextPos = *transform->GetPosition() + glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 }
 
 void Player::OnCollide(CollisionInfo colInfo) {
-	glm::vec3 fixVec = glm::vec3(0.0f);
+	glm::vec3 fix = glm::vec3(0.0f);
 	float delta = GameManager::GetInstance()->GameTime->delta;
 
-	if (colInfo.normal.x != 0) { // Horizontal collision
-		fixVec.x = colInfo.intersectionDepth * colInfo.normal.x + mVelocity.x * -1;
-		mVelocity.x = 0;
-	}
-	else if (colInfo.normal.y != 0) { // Vertical collision
-		float yVal = colInfo.normal.y == 1.0f ? colInfo.collidedObject.max.y : colInfo.collidedObject.min.y;
-		fixVec.y = colInfo.intersectionDepth * colInfo.normal.y + mVelocity.y * -1;
-		if (colInfo.normal.y == 1.0f && !mGrounded) {
-			mGrounded = true;
+	// NOTE: The issue now seems to be that the intersection depth isn't calculated properly, causing the object to
+	// be pushed way further than necessary. Other might be the velocity; having the objects not colliding at all would be the best
+	// since that would seem the cleanest to the user. This would need to be checked with players *NEXT position and then checking with that
+	// 
+	// TODO: Change it so that we check collision with players future position and not current position
+	// with this we can move the player next to the collision object.
+
+	if (colInfo.normal.y != 0) { // Vertical collision resolve
+		if (colInfo.normal.y == 1) {
+			if (!mGrounded)
+				mGrounded = true;
 		}
+		fix.y = colInfo.intersectionDepth *  0.375f;
+		fix.y *= colInfo.normal.y;
 		mVelocity.y = 0;
 	}
-	
-	mVelocity.y += fixVec.y;
-	mVelocity.x += fixVec.x;
+	if (colInfo.normal.x != 0) { // Horizontal collision resolve
+		fix.x =  colInfo.intersectionDepth *  0.375f;
+		fix.x *= colInfo.normal.x;
+		mVelocity.x = 0;
+	}
 
-	//glm::vec3 fix = glm::vec3(0.0f);
-	//float delta = GameManager::GetInstance()->GameTime->delta;
+	*transform->GetPosition() += fix;
+}
 
-	//if (colInfo.normal.y != 0) { // Vertical collision resolve
-	//	if (colInfo.normal.y == 1) {
-	//		fix.y = mVelocity.y + colInfo.intersectionDepth;
-	//		if (!mGrounded)
-	//			mGrounded = true;
-	//	} else {
-	//		fix.y = mVelocity.y - colInfo.intersectionDepth;
-	//	}
-	//	fix.y *= colInfo.normal.y;
-	//	mVelocity.y = 0;
-	//}
-	//if (colInfo.normal.x != 0) { // Horizontal collision resolve
-	//	if (colInfo.normal.x == 1) {
-	//		fix.x = mVelocity.x + colInfo.intersectionDepth;
-	//	} else {
-	//		fix.x = -mVelocity.x - colInfo.intersectionDepth;
-	//	}
-	//	fix.x *= colInfo.normal.x;
-	//	mVelocity.x = 0;
-	//}
-
-	//mVelocity.y += fix.y;
-	//mVelocity.x += fix.x;
+glm::vec3 Player::GetMoveDirection() {
+	glm::vec2 norm = glm::vec2(0.0f);
+	if (mVelocity.x != 0 || mVelocity.y != 0) {
+		norm = glm::normalize(mVelocity);
+	}
+	return glm::vec3(norm.x, norm.y, 0.f);
 }

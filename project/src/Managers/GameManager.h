@@ -40,6 +40,8 @@ public:
 
 	static GameManager* GetInstance();
 
+	Player* GetPlayerRef();
+
 	GameManager(GameManager& other) = delete;
 	void operator=(const GameManager&) = delete;
 };

@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include "Renderer.h"
+
 #include "Player.h"
 #include "Solid.h"
 
@@ -25,6 +27,8 @@ void GameManager::Update() {
 		mLevel[i]->Update(GameTime->delta);
 	CheckCollisions();
 	mPlayerRef->LateUpdate(GameTime->delta);
+
+	Renderer::GetInstance()->MoveCamera(*mPlayerRef->transform->GetPosition());
 }
 
 void GameManager::CheckCollisions() {
@@ -75,4 +79,7 @@ GameManager* GameManager::GetInstance() {
 	if (!mInstance)
 		mInstance = new GameManager();
 	return mInstance;
+}
+Player* GameManager::GetPlayerRef() {
+	return mPlayerRef;
 }

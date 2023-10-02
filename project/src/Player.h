@@ -26,6 +26,8 @@ private:
 	glm::vec3 mJumpColor = glm::vec3(59, 217, 84);
 
 public:
+	glm::vec3 nextPos = glm::vec3(0.0f);
+
 	Player(Transform* nTransform, float nMoveSpeed);
 	~Player();
 
@@ -34,4 +36,6 @@ public:
 	void LateUpdate(float deltaTime) override;
 
 	void OnCollide(struct CollisionInfo colInfo);
+
+	glm::vec3 GetMoveDirection();
 };

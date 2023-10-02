@@ -3,6 +3,9 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "Managers/GameManager.h"
+
+#include "Player.h"
 #include "Shader.h"
 #include "Sprite.h"
 
@@ -49,4 +52,12 @@ void Renderer::Draw(Sprite& spr) {
     spr.GetIB()->Bind();
 
     GLCall(glDrawElements(GL_TRIANGLES, spr.GetIB()->GetCount(), GL_UNSIGNED_INT, nullptr));
+}
+
+void Renderer::MoveCamera(glm::vec3 newPos) {
+    GameManager* gameMGR = GameManager::GetInstance();
+    newPos += gameMGR->GetPlayerRef()->GetMoveDirection() * mLookAheadMult;
+
+    glm::vec3 movement = glm::mix(mCamera->GetPosition(), newPos, mSmoothMult * gameMGR->GameTime->delta);
+    mCamera->SetPosition(movement);
 }

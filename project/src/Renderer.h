@@ -17,6 +17,9 @@ bool GLLogCall(const char* function, const char* file, int line);
 class Renderer {
 private:
     Camera* mCamera;
+
+    float mSmoothMult = 4.25f;
+    float mLookAheadMult = 25.f;
     
     inline static Renderer* mInstance = nullptr;
 
@@ -29,6 +32,8 @@ public:
 
     void Clear() const;
     void Draw(class Sprite& spr);
+
+    void MoveCamera(glm::vec3 newPos);
 
     Renderer(Renderer& other) = delete;
     void operator=(const Renderer&) = delete;
