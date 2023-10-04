@@ -8,9 +8,9 @@ class Player : public GameObject {
 private:
 	glm::vec2 mVelocity = glm::vec2(0.0f);
 
-	float mGravity = -11.25f;
+	float mGravity = -8.5f;
 	float mMaxFall = -350.f;
-	float mJumpPower = 350.f;
+	float mJumpPower = 450.f;
 
 	float mMoveSpeed = 0.f;
 	float mMaxMoveVelocity = 225.f;

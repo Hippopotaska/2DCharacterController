@@ -20,8 +20,6 @@ void GameManager::Init(Player* player, std::vector<Solid*> level) {
 }
 
 void GameManager::Update() {
-	GameTime->UpdateTime();
-
 	mPlayerRef->Update(GameTime->delta);
 	for (size_t i = 0; i < mLevel.size(); i++)
 		mLevel[i]->Update(GameTime->delta);
@@ -32,17 +30,21 @@ void GameManager::Update() {
 }
 
 #pragma region Collision
+// TODO: Do collision checks for the next movement step and make changes to them according to that
+// Should prolly make changes to the velocity vectors
 void GameManager::CheckCollisions() {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = nullptr;
 
+	glm::vec3 plVel = mPlayerRef->GetVelocity();
+
 	for (size_t i = 0; i < mLevel.size(); i++)
 	{
 		slColl = mLevel[i]->GetComponent<AABB>();
-		if (plColl->min.x < slColl->max.x &&
-			plColl->max.x > slColl->min.x &&
-			plColl->min.y < slColl->max.y &&
-			plColl->max.y > slColl->min.y) {
+		if (plColl->min.x + (plVel.x * GameTime->delta) < slColl->max.x &&
+			plColl->max.x + (plVel.x * GameTime->delta) > slColl->min.x &&
+			plColl->min.y + (plVel.y * GameTime->delta) < slColl->max.y &&
+			plColl->max.y + (plVel.y * GameTime->delta) > slColl->min.y) {
 			ResolveCollision(mLevel[i]);
 		}
 	}

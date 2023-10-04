@@ -94,6 +94,7 @@ int main(void) {
             GLCall(glfwSetKeyCallback(WindowData.window, InputManager::KeyCallbackDispatcher));
 
             renderer->Clear();
+            gameMgr->GameTime->UpdateTime();
             gameMgr->Update();
 
             if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
