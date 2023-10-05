@@ -31,6 +31,13 @@ Player::~Player() {}
 
 void Player::Start() {}
 void Player::Update(float deltaTime) {
+	// TODO: Mechanics to implement
+	// Coyote time
+	// Jump buffering
+	// Variable jump height
+	// Air controls
+
+
 	auto inputMgr = InputManager::GetInstance();
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
@@ -87,10 +94,8 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-	//*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.f);
-	//transform->Translate();
-
 	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
+
 
 	mGrounded = false; 
 	// There is no simple way of adding another collider, 
@@ -109,13 +114,6 @@ void Player::OnCollide(CollisionInfo colInfo) {
 	glm::vec3 fix = glm::vec3(0.0f);
 	float delta = GameManager::GetInstance()->GameTime->delta;
 
-	// NOTE: The issue now seems to be that the intersection depth isn't calculated properly, causing the object to
-	// be pushed way further than necessary. Other might be the velocity; having the objects not colliding at all would be the best
-	// since that would seem the cleanest to the user. This would need to be checked with players *NEXT position and then checking with that
-	// 
-	// TODO: Change it so that we check collision with players future position and not current position
-	// with this we can move the player next to the collision object.
-
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {
 			if (!mGrounded)
@@ -126,8 +124,9 @@ void Player::OnCollide(CollisionInfo colInfo) {
 		mVelocity.y = 0;
 	}
 	if (colInfo.normal.x != 0) { // Horizontal collision resolve
-		fix.x =  (colInfo.intersectionDepth * 0.2f) + (mVelocity.x * colInfo.normal.x * delta);
+		fix.x = (colInfo.intersectionDepth * 0.2f) + (mVelocity.x * colInfo.normal.x * delta);
 		fix.x *= colInfo.normal.x;
+
 		mVelocity.x = 0;
 	}
 

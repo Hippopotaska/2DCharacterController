@@ -19,7 +19,9 @@ private:
     Camera* mCamera;
 
     float mSmoothMult = 8.25f;
-    float mLookAheadMult = 50.f;
+
+    // This looks a bit too jarring, needs to be fixed
+    float mLookAheadMult = 0.f;
     
     inline static Renderer* mInstance = nullptr;
 
