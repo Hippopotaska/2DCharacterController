@@ -10,13 +10,19 @@ class Player;
 class Solid;
 
 struct Time {
-	float elapsed, prev, delta;
+	float elapsed, prev, delta, frameTime;
+	float dt = 1 / 60.f;
 
 	Time() : elapsed(0), prev(0), delta(0) {}
 	void UpdateTime() {
 		elapsed = (float)glfwGetTime();
-		delta = elapsed - prev;
+		frameTime = elapsed - prev;
 		prev = elapsed;
+
+		while (frameTime > 0.0f) {
+			delta = glm::min(frameTime, dt);
+			frameTime -= delta;
+		}
 	}
 };
 
