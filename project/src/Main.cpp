@@ -75,7 +75,7 @@ int main(void) {
         Transform* sldT2 = new Transform(glm::mat4(1.0f), glm::vec3(100.f, -100.f, 0.f), glm::vec3(1.5f, 1.0f, 1.0f));
         Transform* sldT3 = new Transform(glm::mat4(1.0f), glm::vec3(0.f, 150.f, 0.f), glm::vec3(4.f, 0.75f, 1.0f));
 
-        Player* player = new Player(plT, 50.f);
+        Player* player = new Player(plT, 10.f);
         Solid* solid1 = new Solid(sldT1);
         Solid* solid2 = new Solid(sldT2);
         Solid* solid3 = new Solid(sldT3);
@@ -86,9 +86,6 @@ int main(void) {
         level.push_back(solid3);
 
         gameMgr->Init(player, level);
-
-        float frames = 0;
-        float fps = 0;
         
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -98,17 +95,11 @@ int main(void) {
 
             renderer->Clear();
             gameMgr->GameTime->UpdateTime();
-            frames++;
             gameMgr->Update();
 
             if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
             }
-
-            fps = frames / gameMgr->GameTime->delta;
-            frames = 0;
-
-            std::cout << "Cur FPS: " << fps << std::endl;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));

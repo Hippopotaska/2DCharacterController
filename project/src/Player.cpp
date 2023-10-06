@@ -41,13 +41,13 @@ void Player::Update(float deltaTime) {
 	auto inputMgr = InputManager::GetInstance();
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
-		mVelocity.x -= mMoveSpeed;
+		mVelocity.x -= mMoveSpeed * deltaTime;
 		if (mVelocity.x < -mMaxMoveVelocity) {
 			mVelocity.x = -mMaxMoveVelocity;
 		}
 	}
 	if (inputMgr->KeyHeld(GLFW_KEY_D)) {
-		mVelocity.x += mMoveSpeed;
+		mVelocity.x += mMoveSpeed * deltaTime;
 		if (mVelocity.x > mMaxMoveVelocity) {
 			mVelocity.x = mMaxMoveVelocity;
 		}
@@ -84,18 +84,17 @@ void Player::Update(float deltaTime) {
 	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
-		mVelocity.y = mJumpPower;
+		mVelocity.y = mJumpPower * deltaTime;
 		mGrounded = false;
 	}
 
 	if (!mGrounded) {
-		mVelocity.y += mGravity;
+		mVelocity.y += mGravity * deltaTime;
 		if (mVelocity.y < mMaxFall)
 			mVelocity.y = mMaxFall;
 	}
 
-	//std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
-
+	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
 	mGrounded = false; 
 	// There is no simple way of adding another collider, 
@@ -106,7 +105,7 @@ void Player::Update(float deltaTime) {
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
-	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
+	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.0f);
 	transform->Translate();
 }
 
