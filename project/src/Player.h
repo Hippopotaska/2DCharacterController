@@ -12,8 +12,8 @@ private:
 	float mMaxFall = -350.f;
 	float mJumpPower = 450.f;
 
-	float mMoveSpeed = 0.f;
-	float mMaxMoveVelocity = 225.f;
+	float mMoveSpeed = 250.f;
+	float mMaxMoveVelocity = 2.f;
 	float mFriction = 1500.f;
 
 	bool mGrounded = false;
@@ -26,7 +26,7 @@ private:
 	glm::vec3 mJumpColor = glm::vec3(59, 217, 84);
 
 public:
-	Player(Transform* nTransform, float nMoveSpeed);
+	Player(Transform* nTransform);
 	~Player();
 
 	void Start();

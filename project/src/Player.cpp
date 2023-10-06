@@ -12,8 +12,8 @@
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
 
-Player::Player(Transform* nTransform, float nMoveSpeed) 
-	: mMoveSpeed(nMoveSpeed), mVelocity(glm::vec2(0.0f)) {
+Player::Player(Transform* nTransform) 
+	: mVelocity(glm::vec2(0.0f)) {
 	transform = nTransform;
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
 	
@@ -118,15 +118,15 @@ void Player::OnCollide(CollisionInfo colInfo) {
 			if (!mGrounded)
 				mGrounded = true;
 		}
-		fix.y = (colInfo.intersectionDepth * 0.2f) + (mVelocity.y * colInfo.normal.y * delta);
+		fix.y = (colInfo.intersectionDepth * 0.2f);
 		fix.y *= colInfo.normal.y;
-		mVelocity.y = 0;
+		mVelocity.y += mVelocity.y * -1;
 	}
 	if (colInfo.normal.x != 0) { // Horizontal collision resolve
-		fix.x = (colInfo.intersectionDepth * 0.2f) + (mVelocity.x * colInfo.normal.x * delta);
+		fix.x = (colInfo.intersectionDepth * 0.2f);
 		fix.x *= colInfo.normal.x;
 
-		mVelocity.x = 0;
+		mVelocity.x += mVelocity.x * -1;
 	}
 
 	*transform->GetPosition() += fix;

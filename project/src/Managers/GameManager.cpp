@@ -20,6 +20,7 @@ void GameManager::Init(Player* player, std::vector<Solid*> level) {
 }
 
 void GameManager::Update() {
+	GameTime->UpdateTime();
 	mPlayerRef->Update(GameTime->delta);
 	for (size_t i = 0; i < mLevel.size(); i++)
 		mLevel[i]->Update(GameTime->delta);
@@ -41,10 +42,10 @@ void GameManager::CheckCollisions() {
 	for (size_t i = 0; i < mLevel.size(); i++)
 	{
 		slColl = mLevel[i]->GetComponent<AABB>();
-		if (plColl->min.x + (plVel.x * GameTime->delta) < slColl->max.x &&
-			plColl->max.x + (plVel.x * GameTime->delta) > slColl->min.x &&
-			plColl->min.y + (plVel.y * GameTime->delta) < slColl->max.y &&
-			plColl->max.y + (plVel.y * GameTime->delta) > slColl->min.y) {
+		if ((plColl->min.x + plVel.x) < slColl->max.x &&
+			(plColl->max.x + plVel.x) > slColl->min.x &&
+			(plColl->min.y + plVel.y) < slColl->max.y &&
+			(plColl->max.y + plVel.y) > slColl->min.y) {
 			ResolveCollision(mLevel[i]);
 		}
 	}
@@ -52,6 +53,8 @@ void GameManager::CheckCollisions() {
 void GameManager::ResolveCollision(Solid* solid) {
 	AABB* a = mPlayerRef->GetComponent<AABB>();
 	AABB* b = solid->GetComponent<AABB>();
+
+	glm::vec3 plVel = mPlayerRef->GetVelocity();
 	
 	static const glm::vec2 faces[4] = {
 		glm::vec2(-1.0f, 0.0f), glm::vec2(1.0f, 0.0f),
