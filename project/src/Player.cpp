@@ -94,7 +94,7 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
+	//std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
 
 
 	mGrounded = false; 

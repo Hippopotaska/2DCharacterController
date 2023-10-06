@@ -86,6 +86,9 @@ int main(void) {
         level.push_back(solid3);
 
         gameMgr->Init(player, level);
+
+        float frames = 0;
+        float fps = 0;
         
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -95,11 +98,17 @@ int main(void) {
 
             renderer->Clear();
             gameMgr->GameTime->UpdateTime();
+            frames++;
             gameMgr->Update();
 
             if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
             }
+
+            fps = frames / gameMgr->GameTime->delta;
+            frames = 0;
+
+            std::cout << "Cur FPS: " << fps << std::endl;
 
             /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));
