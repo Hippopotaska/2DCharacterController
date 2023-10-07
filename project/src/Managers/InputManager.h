@@ -8,7 +8,8 @@ private:
 	std::unordered_map<int, bool> mKeys = {
 		{256, false},	// Escape
 		
-		{65, false},	// A
+		// TODO: Pls do this instead
+		{GLFW_KEY_A, false},	// A
 		{83, false},	// S
 		{68, false},	// D
 		{87, false},	// W

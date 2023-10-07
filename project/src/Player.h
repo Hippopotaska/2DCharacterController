@@ -8,13 +8,15 @@ class Player : public GameObject {
 private:
 	glm::vec2 mVelocity = glm::vec2(0.0f);
 
-	float mGravity = -8.5f;
-	float mMaxFall = -350.f;
-	float mJumpPower = 450.f;
+	static constexpr float GAME_SCALE = 100;
 
-	float mMoveSpeed = 250.f;
-	float mMaxMoveVelocity = 2.f;
-	float mFriction = 1500.f;
+	float mGravity = -8.f * GAME_SCALE;
+	float mMaxFall = -4.f * GAME_SCALE;
+	float mJumpPower = 6.f * GAME_SCALE;
+
+	float mMoveSpeed = 2.5f * GAME_SCALE;
+	float mMaxMoveVelocity = 5.f * GAME_SCALE;
+	float mFriction = 4.f * GAME_SCALE;
 
 	bool mGrounded = false;
 

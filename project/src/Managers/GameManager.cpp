@@ -30,13 +30,11 @@ void GameManager::Update(float deltaTime) {
 }
 
 #pragma region Collision
-// TODO: Do collision checks for the next movement step and make changes to them according to that
-// Should prolly make changes to the velocity vectors
 void GameManager::CheckCollisions() {
 	AABB* plColl = mPlayerRef->GetComponent<AABB>();
 	AABB* slColl = nullptr;
 
-	glm::vec3 plVel = mPlayerRef->GetVelocity();
+	glm::vec3 plVel = mPlayerRef->GetVelocity() * mDeltaTime;
 
 	for (size_t i = 0; i < mLevel.size(); i++)
 	{

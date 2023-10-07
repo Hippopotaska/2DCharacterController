@@ -72,6 +72,8 @@ void Player::Update(float deltaTime) {
 			mCurTimer += deltaTime;
 			if (mCurTimer >= mResetTime) {
 				transform->SetPosition(glm::vec3(0,0,0));
+				mVelocity = glm::vec3(0.0f);
+
 				mReset = true;
 				mCurTimer = 0;
 			}
@@ -83,7 +85,7 @@ void Player::Update(float deltaTime) {
 	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
-		mVelocity.y = mJumpPower * deltaTime;
+		mVelocity.y = mJumpPower;
 		mGrounded = false;
 	}
 
@@ -104,7 +106,7 @@ void Player::Update(float deltaTime) {
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
-	*transform->GetPosition() += glm::vec3(mVelocity.x, mVelocity.y, 0.0f);
+	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 	transform->Translate();
 }
 
