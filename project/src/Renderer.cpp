@@ -58,6 +58,6 @@ void Renderer::MoveCamera(glm::vec3 newPos) {
     GameManager* gameMGR = GameManager::GetInstance();
     newPos += gameMGR->GetPlayerRef()->GetMoveDirection() * mLookAheadMult;
 
-    glm::vec3 movement = glm::mix(mCamera->GetPosition(), newPos, mSmoothMult * gameMGR->GameTime->delta);
+    glm::vec3 movement = glm::mix(mCamera->GetPosition(), newPos, mSmoothMult * gameMGR->GetDeltaTime());
     mCamera->SetPosition(movement);
 }

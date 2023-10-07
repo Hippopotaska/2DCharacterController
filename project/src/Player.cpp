@@ -37,7 +37,6 @@ void Player::Update(float deltaTime) {
 	// Variable jump height
 	// Air controls
 
-
 	auto inputMgr = InputManager::GetInstance();
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
@@ -111,7 +110,7 @@ void Player::LateUpdate(float deltaTime) {
 
 void Player::OnCollide(CollisionInfo colInfo) {
 	glm::vec3 fix = glm::vec3(0.0f);
-	float delta = GameManager::GetInstance()->GameTime->delta;
+	float delta = GameManager::GetInstance()->GetDeltaTime();
 
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {

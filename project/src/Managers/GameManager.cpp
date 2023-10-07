@@ -13,19 +13,18 @@ GameManager::GameManager()
 	: mPlayerRef(nullptr) {}
 
 void GameManager::Init(Player* player, std::vector<Solid*> level) {
-	GameTime = new Time();
-	
 	mPlayerRef = player;
 	mLevel = level;
 }
 
-void GameManager::Update() {
-	GameTime->UpdateTime();
-	mPlayerRef->Update(GameTime->delta);
+void GameManager::Update(float deltaTime) {
+	mDeltaTime = deltaTime;
+
+	mPlayerRef->Update(deltaTime);
 	for (size_t i = 0; i < mLevel.size(); i++)
-		mLevel[i]->Update(GameTime->delta);
+		mLevel[i]->Update(deltaTime);
 	CheckCollisions();
-	mPlayerRef->LateUpdate(GameTime->delta);
+	mPlayerRef->LateUpdate(deltaTime);
 
 	Renderer::GetInstance()->MoveCamera(*mPlayerRef->transform->GetPosition());
 }

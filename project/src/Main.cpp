@@ -6,6 +6,7 @@
 
 #include "Camera.h"
 #include "Renderer.h"
+#include "GameTime.h"
 
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
@@ -87,15 +88,26 @@ int main(void) {
         level.push_back(solid3);
 
         gameMgr->Init(player, level);
+
+        float lastFrameTime = 0.f;
+        float time = 0.f;
+        float delta = 0.f;
         
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
+
+            // Get time stuff
+            time = (float)glfwGetTime();
+            delta = time - lastFrameTime;
+            lastFrameTime = time;
+
+
             /* Poll for and process events */
             GLCall(glfwPollEvents());
             GLCall(glfwSetKeyCallback(WindowData.window, InputManager::KeyCallbackDispatcher));
 
             renderer->Clear();
-            gameMgr->Update();
+            gameMgr->Update(delta);
 
             if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
                 WindowData.isOpen = false;
