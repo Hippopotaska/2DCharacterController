@@ -12,13 +12,14 @@
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
 
+// Change so that takes no transform in as parameter
 Player::Player(Transform* nTransform) 
 	: mVelocity(glm::vec2(0.0f)) {
 	transform = nTransform;
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
 	
 	Shader* shader = new Shader("src/shaders/Basic.glsl");
-	Texture* texture = new Texture("res/textures/Pixel.png");
+	Texture* texture = new Texture("res/textures/Player.png");
 	Sprite* sprite = new Sprite(shader, texture, mDefaultColor, *transform, transform);
 
 	AddComponent(collider);
@@ -38,6 +39,7 @@ void Player::Update(float deltaTime) {
 	// Air controls
 
 	auto inputMgr = InputManager::GetInstance();
+	// Multiplying CHANGES to velocity with delta
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
 		mVelocity.x -= mMoveSpeed * deltaTime;
@@ -95,8 +97,6 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-	std::cout << "Velocity [" << mVelocity.x << ", " << mVelocity.y << "]" << std::endl;
-
 	mGrounded = false; 
 	// There is no simple way of adding another collider, 
 	// so instead we make the player not grounded, so they fall for 1 frame
@@ -106,7 +106,10 @@ void Player::Update(float deltaTime) {
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
+	// Multiplying the velocity with delta AND Game scale for the CHANGE in position
+	deltaTime *= GameManager::GAME_SCALE;
 	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
+
 	transform->Translate();
 }
 

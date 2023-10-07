@@ -82,15 +82,19 @@ int main(void) {
         Solid* solid3 = new Solid(sldT3);
         
         std::vector<Solid*> level;
-        level.push_back(solid1);
-        level.push_back(solid2);
-        level.push_back(solid3);
+        for (size_t i = 0; i < 1; i++)
+        {
+            level.push_back(solid1);
+            level.push_back(solid2);
+            level.push_back(solid3);
+        }
 
         gameMgr->Init(player, level);
 
         float lastFrameTime = 0.f;
         float time = 0.f;
         float delta = 0.f;
+        float frames = 0.f;
         
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -100,6 +104,9 @@ int main(void) {
             delta = time - lastFrameTime;
             lastFrameTime = time;
 
+            frames++;
+
+            std::cout << "FPS: " << (frames / time) << std::endl;
 
             /* Poll for and process events */
             GLCall(glfwPollEvents());

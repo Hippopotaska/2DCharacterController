@@ -11,7 +11,7 @@ Solid::Solid(Transform* nTransform) {
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f, 100.0f));
 
 	Shader* shader = new Shader("src/shaders/Basic.glsl");
-	Texture* texture = new Texture("res/textures/Pixel.png");
+	Texture* texture = new Texture("res/textures/Player.png");
 	Sprite* sprite = new Sprite(shader, texture, glm::vec3(217, 217, 217), *transform, transform);
 
 	AddComponent(collider);

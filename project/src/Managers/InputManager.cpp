@@ -34,16 +34,8 @@ bool InputManager::KeyHeld(int key) {
     return mKeys.at(key);
 }
 bool InputManager::KeyPressed(int key) {
-    if ((glfwGetKey(mInstance->mWindow, key)) == GLFW_PRESS) {
-        return true;
-    } else {
-        return false;
-    }
+    return glfwGetKey(mInstance->mWindow, key) == GLFW_PRESS;
 }
 bool InputManager::KeyReleased(int key) {
-    if ((glfwGetKey(mInstance->mWindow, key)) == GLFW_RELEASE) {
-        return true;
-    } else {
-        return false;
-    }
+    return glfwGetKey(mInstance->mWindow, key) == GLFW_RELEASE;
 }

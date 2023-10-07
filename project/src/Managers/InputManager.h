@@ -6,16 +6,15 @@ class InputManager {
 private:
 	GLFWwindow* mWindow;
 	std::unordered_map<int, bool> mKeys = {
-		{256, false},	// Escape
+		{GLFW_KEY_ESCAPE, false},
 		
-		// TODO: Pls do this instead
-		{GLFW_KEY_A, false},	// A
-		{83, false},	// S
-		{68, false},	// D
-		{87, false},	// W
+		{GLFW_KEY_A, false},
+		{GLFW_KEY_S, false},
+		{GLFW_KEY_D, false},
+		{GLFW_KEY_W, false},
 
-		{32, false},	// Space
-		{82, false},	// R
+		{GLFW_KEY_SPACE, false},
+		{GLFW_KEY_R, false},
 	};
 
 	inline static InputManager* mInstance = nullptr;
