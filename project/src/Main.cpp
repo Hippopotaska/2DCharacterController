@@ -6,7 +6,6 @@
 
 #include "Camera.h"
 #include "Renderer.h"
-#include "GameTime.h"
 
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
