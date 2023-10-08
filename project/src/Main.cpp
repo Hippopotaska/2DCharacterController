@@ -70,26 +70,7 @@ int main(void) {
         Renderer* renderer = renderer->GetInstance();
         renderer->Init(camera);
 
-        // Move creating the transform inside the constructor, have scale and position as parameters
-        Transform* plT = new Transform();
-        Transform* sldT1 = new Transform(glm::mat4(1.0f), glm::vec3(0.f, -150.f, 0.f), glm::vec3(5.0f, 0.85f, 1.0f));
-        Transform* sldT2 = new Transform(glm::mat4(1.0f), glm::vec3(100.f, -100.f, 0.f), glm::vec3(1.5f, 1.0f, 1.0f));
-        Transform* sldT3 = new Transform(glm::mat4(1.0f), glm::vec3(0.f, 150.f, 0.f), glm::vec3(4.f, 0.75f, 1.0f));
-
-        Player* player = new Player(plT);
-        Solid* solid1 = new Solid(sldT1);
-        Solid* solid2 = new Solid(sldT2);
-        Solid* solid3 = new Solid(sldT3);
-        
-        std::vector<Solid*> level;
-        for (size_t i = 0; i < 1; i++)
-        {
-            level.push_back(solid1);
-            level.push_back(solid2);
-            level.push_back(solid3);
-        }
-
-        gameMgr->Init(player, level);
+        gameMgr->Init();
 
         float lastFrameTime = 0.f;
         float time = 0.f;

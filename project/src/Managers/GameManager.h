@@ -13,20 +13,24 @@ class GameManager {
 private:
 	inline static GameManager* mInstance;
 
-	GameManager();
 
 	Player* mPlayerRef;
 	std::vector<Solid*> mLevel;
 
 	float mMaxCollisionTestRange = 3500.f;
 	float mDeltaTime = 0.0f;
+
+	GameManager();
+
+	std::vector<Solid*> LoadLevel();
+
 public:
 
 	// Compile time sorcery (sets GAME_SCALE to be 100.f (not getter, I swear))
 	// Explain this to the user; One unit is equal to 100 => 4 = 400
 	static constexpr float GAME_SCALE = 100.f;
 
-	void Init(Player* player, std::vector<Solid*> level);
+	void Init();
 
 	void Update(float deltaTime);
 

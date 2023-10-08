@@ -13,13 +13,13 @@
 #include "Managers/GameManager.h"
 
 // Change so that takes no transform in as parameter
-Player::Player(Transform* nTransform) 
+Player::Player(glm::vec3 pos) 
 	: mVelocity(glm::vec2(0.0f)) {
-	transform = nTransform;
+	transform = new Transform(glm::mat4(1.0f), pos, glm::vec3(1.0f));
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
 	
 	Shader* shader = new Shader("src/shaders/Basic.glsl");
-	Texture* texture = new Texture("res/textures/Player.png");
+	Texture* texture = new Texture("res/textures/Pixel.png");
 	Sprite* sprite = new Sprite(shader, texture, mDefaultColor, *transform, transform);
 
 	AddComponent(collider);

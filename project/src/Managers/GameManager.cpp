@@ -1,6 +1,8 @@
 #include "GameManager.h"
 
 #include <iostream>
+#include <fstream>
+#include <string>
 
 #include "Renderer.h"
 
@@ -12,9 +14,11 @@
 GameManager::GameManager() 
 	: mPlayerRef(nullptr) {}
 
-void GameManager::Init(Player* player, std::vector<Solid*> level) {
-	mPlayerRef = player;
-	mLevel = level;
+void GameManager::Init() {
+	// TODO: Create a player and read the level Config file
+
+	mPlayerRef = new Player(glm::vec3(0.f));
+	mLevel = LoadLevel();
 }
 
 void GameManager::Update(float deltaTime) {
@@ -78,6 +82,32 @@ void GameManager::ResolveCollision(Solid* solid) {
 	mPlayerRef->OnCollide(info);
 }
 #pragma endregion
+
+std::vector<Solid*> GameManager::LoadLevel() {
+	// Read config file and then parse data
+	std::vector<Solid*> level;
+
+	std::fstream levelConfig;
+	std::string dataLine;
+	std::vector<float> solidData;
+
+	levelConfig.open("res/levelConfig.txt");
+	if (levelConfig.is_open()) {
+		while (std::getline(levelConfig, dataLine, ',')) {
+			solidData.push_back(std::stoi(dataLine));
+			if (solidData.size() == 4) {
+				level.push_back(new Solid(glm::vec3(solidData[0], solidData[1], 0.f)
+					, glm::vec3(solidData[2] / GAME_SCALE, solidData[3] / GAME_SCALE, 1.f)));
+				solidData.clear();
+			}
+		}
+	}
+	else {
+		std::cout << "Trouble opening level config!" << std::endl;
+		return level;
+	}
+	return level;
+}
 
 GameManager* GameManager::GetInstance() {
 	if (!mInstance)

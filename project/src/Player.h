@@ -26,7 +26,7 @@ private:
 	glm::vec3 mJumpColor = glm::vec3(59, 217, 84);
 
 public:
-	Player(Transform* nTransform);
+	Player(glm::vec3 pos);
 	~Player();
 
 	void Start();
