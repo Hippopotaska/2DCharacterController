@@ -10,11 +10,11 @@ private:
 
 	float mGravity = -8.f;
 	float mMaxFall = -4.f;
-	float mJumpPower = 6.f;
+	float mJumpPower = 9.f;
 
-	float mMoveSpeed = 2.5f;
-	float mMaxMoveVelocity = 5.f;
-	float mFriction = 4.f;
+	float mMoveSpeed = 5.f;
+	float mMaxMoveVelocity = 3.f;
+	float mFriction = 8.f;
 
 	bool mGrounded = false;
 

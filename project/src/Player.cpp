@@ -18,7 +18,7 @@ Player::Player(glm::vec3 pos)
 	transform = new Transform(glm::mat4(1.0f), pos, glm::vec3(1.0f));
 	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
 	
-	Shader* shader = new Shader("src/shaders/Basic.glsl");
+	Shader* shader = new Shader("src/shaders/Player.glsl");
 	Texture* texture = new Texture("res/textures/Pixel.png");
 	Sprite* sprite = new Sprite(shader, texture, mDefaultColor, *transform, transform);
 
@@ -87,6 +87,7 @@ void Player::Update(float deltaTime) {
 	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
+		this->GetComponent<Sprite>()->SetColor(mJumpColor, 1);
 		mVelocity.y = mJumpPower;
 		mGrounded = false;
 	}
@@ -98,11 +99,6 @@ void Player::Update(float deltaTime) {
 	}
 
 	mGrounded = false; 
-	// There is no simple way of adding another collider, 
-	// so instead we make the player not grounded, so they fall for 1 frame
-	// and check if there is ground under
-	// Probably better solution would be to test with own collider if there is ground underneath
-	// Like this; move collider down couple of pixels, if there is no ground then set mGrounded to be false
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
@@ -120,6 +116,7 @@ void Player::OnCollide(CollisionInfo colInfo) {
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {
 			if (!mGrounded)
+				this->GetComponent<Sprite>()->SetColor(mDefaultColor, 1);
 				mGrounded = true;
 		}
 		fix.y = (colInfo.intersectionDepth * 0.2f);

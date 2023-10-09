@@ -54,3 +54,9 @@ void Sprite::Update(float deltaTime) {
 void Sprite::DrawSprite() {
 	Renderer::GetInstance()->Draw(*this);
 }
+
+void Sprite::SetColor(glm::vec3 newColor, float newAlpha) {
+	mShader->Bind();
+	mShader->SetUniform4f("u_Color", newColor.x / 255, newColor.y / 255, newColor.z / 255, newAlpha);
+	mShader->Unbind();
+}

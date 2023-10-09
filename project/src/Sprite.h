@@ -31,6 +31,8 @@ public:
 	void Update(float deltaTime) override;
 	void DrawSprite();
 
+	void SetColor(glm::vec3 newColor, float newAlpha = 1.f);
+
 	inline Shader* GetShader() { return mShader; }
 	inline VertexArray* GetVA() { return mVertexArray; }
 	inline IndexBuffer* GetIB() { return mIndexBuffer; }
