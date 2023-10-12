@@ -9,11 +9,13 @@
 
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
+#include "Managers/CollisionManager.h"
 
 #include "Player.h"
 #include "Solid.h"
 #include "Transform.h"
 
+// Move window stuff into a new class OR the game manager
 static struct WindowData {
     GLFWwindow* window;
     int width;
@@ -72,10 +74,10 @@ int main(void) {
 
         gameMgr->Init();
 
+        // Move time stuff into the game manager, since it should work there normally
         float lastFrameTime = 0.f;
         float time = 0.f;
         float delta = 0.f;
-        float frames = 0.f;
         
         /* Loop until the user closes the window */
         while (WindowData.isOpen) {
@@ -84,10 +86,6 @@ int main(void) {
             time = (float)glfwGetTime();
             delta = time - lastFrameTime;
             lastFrameTime = time;
-
-            frames++;
-
-            std::cout << "FPS: " << (frames / time) << std::endl;
 
             /* Poll for and process events */
             GLCall(glfwPollEvents());

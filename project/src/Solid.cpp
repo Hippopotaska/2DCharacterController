@@ -8,7 +8,7 @@
 Solid::Solid(glm::vec3 pos, glm::vec3 scale) {
 	transform = new Transform(glm::mat4(1.0f), pos, scale);
 
-	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f, 100.0f));
+	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f, 100.0f), true);
 
 	Shader* shader = new Shader("src/shaders/Basic.glsl");
 	Texture* texture = new Texture("res/textures/Pixel.png");

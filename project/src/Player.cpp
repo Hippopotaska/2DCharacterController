@@ -9,6 +9,7 @@
 #include "AABB.h"
 #include "Sprite.h"
 
+#include "Managers/CollisionManager.h"
 #include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
 
@@ -16,7 +17,7 @@
 Player::Player(glm::vec3 pos) 
 	: mVelocity(glm::vec2(0.0f)) {
 	transform = new Transform(glm::mat4(1.0f), pos, glm::vec3(1.0f));
-	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f));
+	AABB* collider = new AABB(*transform, transform, glm::vec2(100.0f), false);
 	
 	Shader* shader = new Shader("src/shaders/Player.glsl");
 	Texture* texture = new Texture("res/textures/Pixel.png");
@@ -111,7 +112,6 @@ void Player::LateUpdate(float deltaTime) {
 
 void Player::OnCollide(CollisionInfo colInfo) {
 	glm::vec3 fix = glm::vec3(0.0f);
-	float delta = GameManager::GetInstance()->GetDeltaTime();
 
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {
@@ -123,7 +123,7 @@ void Player::OnCollide(CollisionInfo colInfo) {
 		fix.y *= colInfo.normal.y;
 		mVelocity.y += mVelocity.y * -1;
 	}
-	if (colInfo.normal.x != 0) { // Horizontal collision resolve
+	else if (colInfo.normal.x != 0) { // Horizontal collision resolve
 		fix.x = (colInfo.intersectionDepth * 0.2f);
 		fix.x *= colInfo.normal.x;
 

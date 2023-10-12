@@ -6,6 +6,7 @@
 
 #include <vector>
 
+class CollisionManager;
 class Player;
 class Solid;
 
@@ -13,9 +14,10 @@ class GameManager {
 private:
 	inline static GameManager* mInstance;
 
-
 	Player* mPlayerRef;
 	std::vector<Solid*> mLevel;
+
+	CollisionManager* collisionMngr;
 
 	float mMaxCollisionTestRange = 3500.f;
 	float mDeltaTime = 0.0f;
@@ -25,7 +27,6 @@ private:
 	std::vector<Solid*> LoadLevel();
 
 public:
-
 	// Compile time sorcery (sets GAME_SCALE to be 100.f (not getter, I swear))
 	// Explain this to the user; One unit is equal to 100 => 4 = 400
 	static constexpr float GAME_SCALE = 100.f;
@@ -33,9 +34,6 @@ public:
 	void Init();
 
 	void Update(float deltaTime);
-
-	void CheckCollisions();
-	void ResolveCollision(Solid* solid);
 
 	static GameManager* GetInstance();
 
