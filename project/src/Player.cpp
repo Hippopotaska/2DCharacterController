@@ -53,51 +53,33 @@ void Player::Update(float deltaTime) {
 		if (mVelocity.x > mMaxMoveVelocity) {
 			mVelocity.x = mMaxMoveVelocity;
 		}
-	}	
-
+	}
 	if (!inputMgr->KeyHeld(GLFW_KEY_D) && !inputMgr->KeyHeld(GLFW_KEY_A)) {
-		if (mVelocity.x != 0) {
-			if (mVelocity.x > 0) {
-				mVelocity.x -= mFriction * deltaTime;
-				if (mVelocity.x < 0)
-					mVelocity.x = 0;
-			}
-			else if (mVelocity.x < 0) {
-				mVelocity.x += mFriction * deltaTime;
-				if (mVelocity.x > 0)
-					mVelocity.x = 0;
-			}
+		if (mVelocity.x > 0 && mVelocity.x != 0) {
+			mVelocity.x -= mFriction * deltaTime;
+			if (mVelocity.x < 0)
+				mVelocity.x = 0;
 		}
-	}
-
-	if (inputMgr->KeyHeld(GLFW_KEY_R)) {
-		if (!mReset) {
-			mCurTimer += deltaTime;
-			if (mCurTimer >= mResetTime) {
-				transform->SetPosition(glm::vec3(0,0,0));
-				mVelocity = glm::vec3(0.0f);
-
-				mReset = true;
-				mCurTimer = 0;
-			}
+		if (mVelocity.x < 0 && mVelocity.x != 0) {
+			mVelocity.x += mFriction * deltaTime;
+			if (mVelocity.x > 0)
+				mVelocity.x = 0;
 		}
-	}
-	else {
-		mReset = false;
-		mCurTimer = 0;
 	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
-		this->GetComponent<Sprite>()->SetColor(mJumpColor, 1);
 		mVelocity.y = mJumpPower;
 		mGrounded = false;
 	}
 
 	if (!mGrounded) {
 		mVelocity.y += mGravity * deltaTime;
-		if (mVelocity.y < mMaxFall)
-			mVelocity.y = mMaxFall;
 	}
+	//if (!mGrounded) {
+	//	mVelocity.y += mGravity * deltaTime;
+	//	if (mVelocity.y < mMaxFall)
+	//		mVelocity.y = mMaxFall;
+	//}
 
 	mGrounded = false; 
 	GameObject::Update(deltaTime);
