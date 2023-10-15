@@ -28,6 +28,14 @@ Player::Player(glm::vec3 pos)
 
 	collider->SetParent(transform);
 	sprite->SetParent(transform);
+
+	// Calculating the gravity and jump power with max jump height and jump duration
+	mGravity = -((8 * mMaxJumpHeight) / (mJumpDuration * mJumpDuration));
+	mJumpPower = -(mGravity * (mJumpDuration * mJumpDuration)) * 0.5f;
+
+	// TODO: Need to solve the equations by myself
+	// Check notebook on top of Maol book it has the solve for both v_0 and g
+	// https://silverweed.github.io/Implementing_a_jump_with_a_given_duration_and_height/
 }
 Player::~Player() {}
 
@@ -40,7 +48,9 @@ void Player::Update(float deltaTime) {
 	// Air controls
 
 	auto inputMgr = InputManager::GetInstance();
-	// Multiplying CHANGES to velocity with delta
+
+	// Whenever the velocity values are change 
+	// it needs to be multiplied by deltaTime
 
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
 		mVelocity.x -= mMoveSpeed * deltaTime;
@@ -68,6 +78,9 @@ void Player::Update(float deltaTime) {
 	}
 
 	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
+		if (!mIsJumping) {
+			mIsJumping = true;
+		}
 		mVelocity.y = mJumpPower;
 		mGrounded = false;
 	}
@@ -75,11 +88,6 @@ void Player::Update(float deltaTime) {
 	if (!mGrounded) {
 		mVelocity.y += mGravity * deltaTime;
 	}
-	//if (!mGrounded) {
-	//	mVelocity.y += mGravity * deltaTime;
-	//	if (mVelocity.y < mMaxFall)
-	//		mVelocity.y = mMaxFall;
-	//}
 
 	mGrounded = false; 
 	GameObject::Update(deltaTime);
@@ -97,9 +105,10 @@ void Player::OnCollide(CollisionInfo colInfo) {
 
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {
-			if (!mGrounded)
+			if (!mGrounded) {
 				this->GetComponent<Sprite>()->SetColor(mDefaultColor, 1);
 				mGrounded = true;
+			}
 		}
 		fix.y = (colInfo.intersectionDepth * 0.2f);
 		fix.y *= colInfo.normal.y;
