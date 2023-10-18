@@ -11,13 +11,15 @@ private:
 	float mMaxJumpHeight = 2.f;
 	float mJumpDuration = 1.f;
 
-	bool mIsJumping = false;
-	float mJumpTimer = 0.f;
+	float mCoyoteTime = 0.15f;
+	float mJumpBufferTime = 0.2f;
 
-	float mMaxFall = -6.f;
+	float mCoyoteTimeCounter = 0.f;
+	float mJumpBufferCounter = 0.f;
 
 	float mJumpPower = 0.f;
 	float mGravity = -0.f;
+	float mMaxFall = -6.f;
 
 	float mMoveSpeed = 10.f;
 	float mMaxMoveVelocity = 3.f;

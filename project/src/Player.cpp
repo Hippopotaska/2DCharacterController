@@ -32,19 +32,13 @@ Player::Player(glm::vec3 pos)
 	// Calculating the gravity and jump power with max jump height and jump duration
 	mGravity = -((8 * mMaxJumpHeight) / (mJumpDuration * mJumpDuration));
 	mJumpPower = -(mGravity * (mJumpDuration * mJumpDuration)) * 0.5f;
-
-	// TODO: Need to solve the equations by myself
-	// Check notebook on top of Maol book it has the solve for both v_0 and g
-	// https://silverweed.github.io/Implementing_a_jump_with_a_given_duration_and_height/
 }
 Player::~Player() {}
 
 void Player::Start() {}
 void Player::Update(float deltaTime) {
 	// TODO: Mechanics to implement
-	// Coyote time
 	// Jump buffering
-	// Variable jump height
 	// Air controls
 
 	auto inputMgr = InputManager::GetInstance();
@@ -52,6 +46,7 @@ void Player::Update(float deltaTime) {
 	// Whenever the velocity values are change 
 	// it needs to be multiplied by deltaTime
 
+#pragma region Vertical Movement
 	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
 		mVelocity.x -= mMoveSpeed * deltaTime;
 		if (mVelocity.x < -mMaxMoveVelocity) {
@@ -76,24 +71,59 @@ void Player::Update(float deltaTime) {
 				mVelocity.x = 0;
 		}
 	}
+#pragma endregion
 
-	if (inputMgr->KeyPressed(GLFW_KEY_SPACE) && mGrounded) {
-		if (!mIsJumping) {
-			mIsJumping = true;
+
+	// Coyote time counter logic
+	if (mGrounded) {
+		mCoyoteTimeCounter = mCoyoteTime;
+	} else {
+		if (mCoyoteTimeCounter > 0) {
+			mCoyoteTimeCounter -= deltaTime;
+		} else {
+			mCoyoteTimeCounter = 0;
 		}
+	}
+	// Jump buffering counter logic
+	// TODO: Jump buffering seems to work, but the jump force does not get applied
+	// Most likely has something to do with collisions
+	if (inputMgr->KeyPressed(GLFW_KEY_SPACE)) {
+		mJumpBufferCounter = mJumpBufferTime;
+	} else {
+		if (mJumpBufferCounter > 0) {
+			mJumpBufferCounter -= deltaTime;
+		} else {
+			mJumpBufferCounter = 0;
+		}
+	}
+
+	if (mJumpBufferCounter > 0 && mCoyoteTimeCounter > 0) {
 		mVelocity.y = mJumpPower;
-		mGrounded = false;
+
+		mJumpBufferCounter = 0;
+		mCoyoteTimeCounter = 0;
+
+		if (mGrounded)
+			mGrounded = false;
+	}
+
+	if (inputMgr->KeyReleased(GLFW_KEY_SPACE) && mVelocity.y > 0) {
+		mVelocity.y *= 0.5f;
 	}
 
 	if (!mGrounded) {
 		mVelocity.y += mGravity * deltaTime;
+		if (mVelocity.y < mMaxFall)
+			mVelocity.y = mMaxFall;
 	}
+
 
 	mGrounded = false; 
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
 	// Multiplying the velocity with delta AND Game scale for the CHANGE in position
+
 	deltaTime *= GameManager::GAME_SCALE;
 	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
 
@@ -106,7 +136,6 @@ void Player::OnCollide(CollisionInfo colInfo) {
 	if (colInfo.normal.y != 0) { // Vertical collision resolve
 		if (colInfo.normal.y == 1) {
 			if (!mGrounded) {
-				this->GetComponent<Sprite>()->SetColor(mDefaultColor, 1);
 				mGrounded = true;
 			}
 		}
@@ -122,6 +151,7 @@ void Player::OnCollide(CollisionInfo colInfo) {
 	}
 
 	*transform->GetPosition() += fix;
+	transform->Translate();
 }
 
 glm::vec3 Player::GetMoveDirection() {

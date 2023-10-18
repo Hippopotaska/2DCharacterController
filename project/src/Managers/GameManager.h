@@ -27,8 +27,6 @@ private:
 	std::vector<Solid*> LoadLevel();
 
 public:
-	// Compile time sorcery (sets GAME_SCALE to be 100.f (not getter, I swear))
-	// Explain this to the user; One unit is equal to 100 => 4 = 400
 	static constexpr float GAME_SCALE = 100.f;
 
 	void Init();

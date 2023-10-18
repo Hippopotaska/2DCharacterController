@@ -26,8 +26,10 @@ void GameManager::Update(float deltaTime) {
 	mDeltaTime = deltaTime;
 
 	mPlayerRef->Update(deltaTime);
-	for (size_t i = 0; i < mLevel.size(); i++)
+	for (size_t i = 0; i < mLevel.size(); i++) {
 		mLevel[i]->Update(deltaTime);
+	}
+
 	collisionMngr->CheckCollisions(mLevel);
 	mPlayerRef->LateUpdate(deltaTime);
 
