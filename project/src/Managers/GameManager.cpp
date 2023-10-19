@@ -6,6 +6,7 @@
 
 #include "Renderer.h"
 #include "CollisionManager.h"
+#include "InputManager.h"
 
 #include "Player.h"
 #include "Solid.h"
@@ -24,6 +25,8 @@ void GameManager::Init() {
 
 void GameManager::Update(float deltaTime) {
 	mDeltaTime = deltaTime;
+
+	InputManager::GetInstance()->Update();
 
 	mPlayerRef->Update(deltaTime);
 	for (size_t i = 0; i < mLevel.size(); i++) {

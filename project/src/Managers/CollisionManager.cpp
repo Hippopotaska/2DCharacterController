@@ -33,15 +33,17 @@ void CollisionManager::ResolveCollision(Solid* solid) {
 	AABB* a = player->GetComponent<AABB>();
 	AABB* b = solid->GetComponent<AABB>();
 
+	glm::vec3 plVel = player->GetVelocity() * GameManager::GetInstance()->GetDeltaTime();
+
 	static const glm::vec2 faces[4] = {
 		glm::vec2(-1.0f, 0.0f), glm::vec2(1.0f, 0.0f),
 		glm::vec2(0.0f, -1.0f), glm::vec2(0.0f, 1.0f),
 	};
 	float distances[4] = {
-		(a->max.x - b->min.x),
-		(b->max.x - a->min.x),
-		(a->max.y - b->min.y),
-		(b->max.y - a->min.y),
+		((a->max.x + plVel.x) - b->min.x),
+		(b->max.x - (a->min.x + plVel.x)),
+		((a->max.y + plVel.y) - b->min.y),
+		(b->max.y - (a->min.y + plVel.y)),
 	};
 
 	float intersection = FLT_MAX;

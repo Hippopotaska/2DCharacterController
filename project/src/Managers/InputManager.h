@@ -1,33 +1,64 @@
 #pragma once
-#include <GLFW/glfw3.h>
+#ifdef _WIN32_WINDOWS
+#undef _WIN32_WINDOWS
+#endif
+#ifdef _WIN32_WINNT
+#undef _WIN32_WINNT
+#endif
+
+#define _WIN32_WINDOWS 0x0501
+#define _WIN32_WINNT   0x0501
+
+// https://www.geeksforgeeks.org/ascii-table/
+#define Keyboard_Esc 27
+#define Keyboard_W 87
+#define Keyboard_A 65 
+#define Keyboard_S 83
+#define Keyboard_D 68
+#define Keyboard_Space VK_SPACE
+#define Keyboard_R 32
+
+#include <windows.h>
+
 #include <unordered_map>
+
+struct KeyState {
+	bool keyUp;
+	bool keyDown;
+	bool keyHeld;
+	bool keyReleased;
+
+	KeyState() {
+		keyUp = true;
+		keyDown = false;
+		keyHeld = false;
+		keyReleased = false;
+	}
+};
 
 class InputManager {
 private:
-	GLFWwindow* mWindow;
-	std::unordered_map<int, bool> mKeys = {
-		{GLFW_KEY_ESCAPE, false},
-		
-		{GLFW_KEY_A, false},
-		{GLFW_KEY_S, false},
-		{GLFW_KEY_D, false},
-		{GLFW_KEY_W, false},
+	std::unordered_map<int, KeyState> mKeys = {
+		{Keyboard_Esc, KeyState()},
+			
+		{Keyboard_W, KeyState()},
+		{Keyboard_S, KeyState()},
+		{Keyboard_D, KeyState()},
+		{Keyboard_A, KeyState()},
 
-		{GLFW_KEY_SPACE, false},
-		{GLFW_KEY_R, false},
+		{Keyboard_Space, KeyState()},
+		{Keyboard_R, KeyState()},
 	};
 
 	inline static InputManager* mInstance = nullptr;
-
 	InputManager();
 
-public:
-	void SetWindow(GLFWwindow* nWindow);
+	void UpdateInput(bool state, int key);
 
+public:
 	static InputManager* GetInstance();
 
-	void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-	static void KeyCallbackDispatcher(GLFWwindow* window, int key, int scancode, int action, int mods);
+	void Update();
 
 	bool KeyHeld(int key);
 	bool KeyPressed(int key);

@@ -49,7 +49,6 @@ int main(void) {
     glfwSwapInterval(1);
 
     InputManager* inputMgr = inputMgr->GetInstance();
-    inputMgr->SetWindow(WindowData.window);
 
     GameManager* gameMgr = gameMgr->GetInstance();
 
@@ -89,12 +88,11 @@ int main(void) {
 
             /* Poll for and process events */
             GLCall(glfwPollEvents());
-            GLCall(glfwSetKeyCallback(WindowData.window, InputManager::KeyCallbackDispatcher));
 
             renderer->Clear();
             gameMgr->Update(delta);
 
-            if (inputMgr->KeyPressed(GLFW_KEY_ESCAPE)) {
+            if (inputMgr->KeyHeld(Keyboard_Esc)) {
                 WindowData.isOpen = false;
             }
 

@@ -47,19 +47,29 @@ void Player::Update(float deltaTime) {
 	// it needs to be multiplied by deltaTime
 
 #pragma region Vertical Movement
-	if (inputMgr->KeyHeld(GLFW_KEY_A)) {
-		mVelocity.x -= mMoveSpeed * deltaTime;
+	if (inputMgr->KeyHeld(Keyboard_A)) {
+		if (mGrounded) {
+			mVelocity.x -= mMoveSpeed * deltaTime;
+		} else {
+			mVelocity.x -= mMoveSpeed * deltaTime * mAirControlMult;
+		}
+
 		if (mVelocity.x < -mMaxMoveVelocity) {
 			mVelocity.x = -mMaxMoveVelocity;
 		}
 	}
-	if (inputMgr->KeyHeld(GLFW_KEY_D)) {
-		mVelocity.x += mMoveSpeed * deltaTime;
+	if (inputMgr->KeyHeld(Keyboard_D)) {
+		if (mGrounded) {
+			mVelocity.x += mMoveSpeed * deltaTime;
+		} else {
+			mVelocity.x += mMoveSpeed * deltaTime * mAirControlMult;
+		}
+
 		if (mVelocity.x > mMaxMoveVelocity) {
 			mVelocity.x = mMaxMoveVelocity;
 		}
 	}
-	if (!inputMgr->KeyHeld(GLFW_KEY_D) && !inputMgr->KeyHeld(GLFW_KEY_A)) {
+	if (!inputMgr->KeyHeld(Keyboard_D) && !inputMgr->KeyHeld(Keyboard_A)) {
 		if (mVelocity.x > 0 && mVelocity.x != 0) {
 			mVelocity.x -= mFriction * deltaTime;
 			if (mVelocity.x < 0)
@@ -73,7 +83,6 @@ void Player::Update(float deltaTime) {
 	}
 #pragma endregion
 
-
 	// Coyote time counter logic
 	if (mGrounded) {
 		mCoyoteTimeCounter = mCoyoteTime;
@@ -85,9 +94,7 @@ void Player::Update(float deltaTime) {
 		}
 	}
 	// Jump buffering counter logic
-	// TODO: Jump buffering seems to work, but the jump force does not get applied
-	// Most likely has something to do with collisions
-	if (inputMgr->KeyPressed(GLFW_KEY_SPACE)) {
+	if (inputMgr->KeyHeld(Keyboard_Space)) {
 		mJumpBufferCounter = mJumpBufferTime;
 	} else {
 		if (mJumpBufferCounter > 0) {
@@ -97,18 +104,26 @@ void Player::Update(float deltaTime) {
 		}
 	}
 
+	mGrounded = false;
+	GameObject::Update(deltaTime);
+}
+void Player::LateUpdate(float deltaTime) {
+	// Multiplying the velocity with delta AND Game scale for the CHANGE in position
+	auto inputMgr = InputManager::GetInstance();
+
 	if (mJumpBufferCounter > 0 && mCoyoteTimeCounter > 0) {
 		mVelocity.y = mJumpPower;
 
-		mJumpBufferCounter = 0;
 		mCoyoteTimeCounter = 0;
+		mJumpBufferCounter = 0;
 
 		if (mGrounded)
 			mGrounded = false;
 	}
 
-	if (inputMgr->KeyReleased(GLFW_KEY_SPACE) && mVelocity.y > 0) {
-		mVelocity.y *= 0.5f;
+	//Problems seems to be that player is inside ground when trying to jump
+	if (inputMgr->KeyReleased(Keyboard_Space) && mVelocity.y > 0) {
+		mVelocity.y *= mVariableJumpMult;
 	}
 
 	if (!mGrounded) {
@@ -117,16 +132,8 @@ void Player::Update(float deltaTime) {
 			mVelocity.y = mMaxFall;
 	}
 
-
-	mGrounded = false; 
-	GameObject::Update(deltaTime);
-}
-void Player::LateUpdate(float deltaTime) {
-	// Multiplying the velocity with delta AND Game scale for the CHANGE in position
-
 	deltaTime *= GameManager::GAME_SCALE;
 	*transform->GetPosition() += glm::vec3(mVelocity.x * deltaTime, mVelocity.y * deltaTime, 0.0f);
-
 	transform->Translate();
 }
 
@@ -141,7 +148,9 @@ void Player::OnCollide(CollisionInfo colInfo) {
 		}
 		fix.y = (colInfo.intersectionDepth * 0.2f);
 		fix.y *= colInfo.normal.y;
-		mVelocity.y += mVelocity.y * -1;
+
+		if (mVelocity.y <= 0 || colInfo.normal.y == -1)
+			mVelocity.y += mVelocity.y * -1;
 	}
 	else if (colInfo.normal.x != 0) { // Horizontal collision resolve
 		fix.x = (colInfo.intersectionDepth * 0.2f);

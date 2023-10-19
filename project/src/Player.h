@@ -25,6 +25,9 @@ private:
 	float mMaxMoveVelocity = 3.f;
 	float mFriction = 15.f;
 
+	float mAirControlMult = 0.85f;
+	float mVariableJumpMult = 0.65f;
+
 	bool mGrounded = false;
 
 	float mResetTime = 1.f;

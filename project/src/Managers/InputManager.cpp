@@ -1,12 +1,9 @@
 #include "InputManager.h"
 
-InputManager::InputManager() {
-    mWindow = nullptr;
-}
+#include <iostream>
+#include <WinUser.h>
 
-void InputManager::SetWindow(GLFWwindow* nWindow) {
-    this->mWindow = nWindow;
-}
+InputManager::InputManager() {}
 
 InputManager* InputManager::GetInstance() {
     if (!mInstance)
@@ -14,28 +11,35 @@ InputManager* InputManager::GetInstance() {
     return mInstance;
 }
 
-void InputManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (!mKeys.contains(key))
-        return;
-    
-    if (action == GLFW_PRESS) {
-        mKeys.at(key) = true;
-    }
-    else if (action == GLFW_RELEASE) {
-        mKeys.at(key) = false;
+void InputManager::Update() {
+    uint8_t keyStates[256]{ 0 };
+    auto ret = GetKeyboardState(keyStates);
+
+    bool state;
+    for (size_t i = 0; i < 256; i++) {
+        state = (keyStates[i] & 0x80) != 0;
+        UpdateInput(state, i);
     }
 }
 
-void InputManager::KeyCallbackDispatcher(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    mInstance->KeyCallback(window, key, scancode, action, mods);
+void InputManager::UpdateInput(bool state, int key) {
+    if (!mKeys.contains(key))
+        return;
+
+    const bool held = KeyHeld(key);
+
+    mKeys.at(key).keyHeld = state;
+
+    mKeys.at(key).keyDown = !state && held;
+    mKeys.at(key).keyUp = !state && held;
 }
 
 bool InputManager::KeyHeld(int key) {
-    return mKeys.at(key);
+    return mKeys.at(key).keyHeld;
 }
 bool InputManager::KeyPressed(int key) {
-    return glfwGetKey(mInstance->mWindow, key) == GLFW_PRESS;
+    return mKeys.at(key).keyDown;
 }
 bool InputManager::KeyReleased(int key) {
-    return glfwGetKey(mInstance->mWindow, key) == GLFW_RELEASE;
+    return mKeys.at(key).keyUp;
 }
