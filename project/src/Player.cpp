@@ -117,8 +117,7 @@ void Player::LateUpdate(float deltaTime) {
 		mCoyoteTimeCounter = 0;
 		mJumpBufferCounter = 0;
 
-		if (mGrounded)
-			mGrounded = false;
+		mGrounded = false;
 	}
 
 	//Problems seems to be that player is inside ground when trying to jump

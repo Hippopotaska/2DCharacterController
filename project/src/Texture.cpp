@@ -1,6 +1,6 @@
 #include "Texture.h"
 
-#include "thirdparty/stb_image.h"
+#include "thirdparty/stbimage/stb_image.h"
 
 Texture::Texture(const std::string& path) 
 	: mRendererID(0), mFilePath(path), mLocalBuffer(nullptr), 
