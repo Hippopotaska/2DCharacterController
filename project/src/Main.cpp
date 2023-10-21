@@ -108,7 +108,7 @@ int main(void) {
             renderer->Clear();
             gameMgr->Update(delta);
 
-            if (inputMgr->KeyHeld(Keyboard_Esc)) {
+            if (inputMgr->KeyPressed(Keyboard_Esc)) {
                 WindowData.isOpen = false;
             }
 

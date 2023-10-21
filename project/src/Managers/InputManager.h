@@ -16,7 +16,6 @@
 #define Keyboard_S 83
 #define Keyboard_D 68
 #define Keyboard_Space VK_SPACE
-#define Keyboard_R 32
 
 #include <windows.h>
 
@@ -47,7 +46,6 @@ private:
 		{Keyboard_A, KeyState()},
 
 		{Keyboard_Space, KeyState()},
-		{Keyboard_R, KeyState()},
 	};
 
 	inline static InputManager* mInstance = nullptr;

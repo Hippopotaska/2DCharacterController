@@ -37,14 +37,7 @@ Player::~Player() {}
 
 void Player::Start() {}
 void Player::Update(float deltaTime) {
-	// TODO: Mechanics to implement
-	// Jump buffering
-	// Air controls
-
 	auto inputMgr = InputManager::GetInstance();
-
-	// Whenever the velocity values are change 
-	// it needs to be multiplied by deltaTime
 
 #pragma region Vertical Movement
 	if (inputMgr->KeyHeld(Keyboard_A)) {
@@ -82,8 +75,8 @@ void Player::Update(float deltaTime) {
 		}
 	}
 #pragma endregion
-
-	// Coyote time counter logic
+#pragma region Jump timers logic
+	// Coyote time
 	if (mGrounded) {
 		mCoyoteTimeCounter = mCoyoteTime;
 	} else {
@@ -93,16 +86,20 @@ void Player::Update(float deltaTime) {
 			mCoyoteTimeCounter = 0;
 		}
 	}
-	// Jump buffering counter logic
+
+	// Jump buffering
 	if (inputMgr->KeyHeld(Keyboard_Space)) {
 		mJumpBufferCounter = mJumpBufferTime;
-	} else {
+	}
+	else {
 		if (mJumpBufferCounter > 0) {
 			mJumpBufferCounter -= deltaTime;
-		} else {
+		}
+		else {
 			mJumpBufferCounter = 0;
 		}
 	}
+#pragma endregion
 
 	mGrounded = false;
 	GameObject::Update(deltaTime);
