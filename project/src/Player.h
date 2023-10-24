@@ -12,7 +12,7 @@ private:
 	float mJumpDuration = 1.f;
 
 	float mCoyoteTime = 0.15f;
-	float mJumpBufferTime = 0.2f;
+	float mJumpBufferTime = 0.1f;
 
 	float mCoyoteTimeCounter = 0.f;
 	float mJumpBufferCounter = 0.f;
@@ -24,6 +24,7 @@ private:
 	float mMoveSpeed = 10.f;
 	float mMaxMoveVelocity = 3.f;
 	float mFriction = 15.f;
+	float mAirFriction = 5.f;
 
 	float mAirControlMult = 0.85f;
 	float mVariableJumpMult = 0.65f;

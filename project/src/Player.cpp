@@ -41,22 +41,20 @@ void Player::Update(float deltaTime) {
 
 #pragma region Vertical Movement
 	if (inputMgr->KeyHeld(Keyboard_A)) {
-		if (mGrounded) {
+		if (mGrounded)
 			mVelocity.x -= mMoveSpeed * deltaTime;
-		} else {
+		else
 			mVelocity.x -= mMoveSpeed * deltaTime * mAirControlMult;
-		}
 
 		if (mVelocity.x < -mMaxMoveVelocity) {
 			mVelocity.x = -mMaxMoveVelocity;
 		}
 	}
 	if (inputMgr->KeyHeld(Keyboard_D)) {
-		if (mGrounded) {
+		if (mGrounded)
 			mVelocity.x += mMoveSpeed * deltaTime;
-		} else {
+		else
 			mVelocity.x += mMoveSpeed * deltaTime * mAirControlMult;
-		}
 
 		if (mVelocity.x > mMaxMoveVelocity) {
 			mVelocity.x = mMaxMoveVelocity;
@@ -64,12 +62,20 @@ void Player::Update(float deltaTime) {
 	}
 	if (!inputMgr->KeyHeld(Keyboard_D) && !inputMgr->KeyHeld(Keyboard_A)) {
 		if (mVelocity.x > 0 && mVelocity.x != 0) {
-			mVelocity.x -= mFriction * deltaTime;
+			if (mGrounded)
+				mVelocity.x -= mFriction * deltaTime;
+			else
+				mVelocity.x -= mAirFriction * deltaTime;
+
 			if (mVelocity.x < 0)
 				mVelocity.x = 0;
 		}
 		if (mVelocity.x < 0 && mVelocity.x != 0) {
-			mVelocity.x += mFriction * deltaTime;
+			if (mGrounded)
+				mVelocity.x += mFriction * deltaTime;
+			else 
+				mVelocity.x += mAirFriction * deltaTime;
+
 			if (mVelocity.x > 0)
 				mVelocity.x = 0;
 		}
