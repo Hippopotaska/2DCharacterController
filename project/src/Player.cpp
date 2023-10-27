@@ -29,9 +29,7 @@ Player::Player(glm::vec3 pos)
 	collider->SetParent(transform);
 	sprite->SetParent(transform);
 
-	// Calculating the gravity and jump power with max jump height and jump duration
-	mGravity = -((8 * mMaxJumpHeight) / (mJumpDuration * mJumpDuration));
-	mJumpPower = -(mGravity * (mJumpDuration * mJumpDuration)) * 0.5f;
+	CalcGravityAndJumpPower();
 }
 Player::~Player() {}
 
@@ -42,39 +40,39 @@ void Player::Update(float deltaTime) {
 #pragma region Vertical Movement
 	if (inputMgr->KeyHeld(Keyboard_A)) {
 		if (mGrounded)
-			mVelocity.x -= mMoveSpeed * deltaTime;
+			mVelocity.x -= moveSpeed * deltaTime;
 		else
-			mVelocity.x -= mMoveSpeed * deltaTime * mAirControlMult;
+			mVelocity.x -= moveSpeed * deltaTime * airControlMult;
 
-		if (mVelocity.x < -mMaxMoveVelocity) {
-			mVelocity.x = -mMaxMoveVelocity;
+		if (mVelocity.x < -maxMoveVelocity) {
+			mVelocity.x = -maxMoveVelocity;
 		}
 	}
 	if (inputMgr->KeyHeld(Keyboard_D)) {
 		if (mGrounded)
-			mVelocity.x += mMoveSpeed * deltaTime;
+			mVelocity.x += moveSpeed * deltaTime;
 		else
-			mVelocity.x += mMoveSpeed * deltaTime * mAirControlMult;
+			mVelocity.x += moveSpeed * deltaTime * airControlMult;
 
-		if (mVelocity.x > mMaxMoveVelocity) {
-			mVelocity.x = mMaxMoveVelocity;
+		if (mVelocity.x > maxMoveVelocity) {
+			mVelocity.x = maxMoveVelocity;
 		}
 	}
 	if (!inputMgr->KeyHeld(Keyboard_D) && !inputMgr->KeyHeld(Keyboard_A)) {
 		if (mVelocity.x > 0 && mVelocity.x != 0) {
 			if (mGrounded)
-				mVelocity.x -= mFriction * deltaTime;
+				mVelocity.x -= friction * deltaTime;
 			else
-				mVelocity.x -= mAirFriction * deltaTime;
+				mVelocity.x -= airFriction * deltaTime;
 
 			if (mVelocity.x < 0)
 				mVelocity.x = 0;
 		}
 		if (mVelocity.x < 0 && mVelocity.x != 0) {
 			if (mGrounded)
-				mVelocity.x += mFriction * deltaTime;
+				mVelocity.x += friction * deltaTime;
 			else 
-				mVelocity.x += mAirFriction * deltaTime;
+				mVelocity.x += airFriction * deltaTime;
 
 			if (mVelocity.x > 0)
 				mVelocity.x = 0;
@@ -84,7 +82,7 @@ void Player::Update(float deltaTime) {
 #pragma region Jump timers logic
 	// Coyote time
 	if (mGrounded) {
-		mCoyoteTimeCounter = mCoyoteTime;
+		mCoyoteTimeCounter = coyoteTime;
 	} else {
 		if (mCoyoteTimeCounter > 0) {
 			mCoyoteTimeCounter -= deltaTime;
@@ -95,7 +93,7 @@ void Player::Update(float deltaTime) {
 
 	// Jump buffering
 	if (inputMgr->KeyHeld(Keyboard_Space)) {
-		mJumpBufferCounter = mJumpBufferTime;
+		mJumpBufferCounter = jumpBufferTime;
 	}
 	else {
 		if (mJumpBufferCounter > 0) {
@@ -125,13 +123,13 @@ void Player::LateUpdate(float deltaTime) {
 
 	//Problems seems to be that player is inside ground when trying to jump
 	if (inputMgr->KeyReleased(Keyboard_Space) && mVelocity.y > 0) {
-		mVelocity.y *= mVariableJumpMult;
+		mVelocity.y *= variableJumpMult;
 	}
 
 	if (!mGrounded) {
 		mVelocity.y += mGravity * deltaTime;
-		if (mVelocity.y < mMaxFall)
-			mVelocity.y = mMaxFall;
+		if (mVelocity.y < maxFall)
+			mVelocity.y = maxFall;
 	}
 
 	deltaTime *= GameManager::GAME_SCALE;
@@ -163,6 +161,11 @@ void Player::OnCollide(CollisionInfo colInfo) {
 
 	*transform->GetPosition() += fix;
 	transform->Translate();
+}
+
+void Player::CalcGravityAndJumpPower() {
+	mGravity = -((8 * maxJumpHeight) / (jumpDuration * jumpDuration));
+	mJumpPower = -(mGravity * (jumpDuration * jumpDuration)) * 0.5f;
 }
 
 glm::vec3 Player::GetMoveDirection() {
