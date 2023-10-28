@@ -164,8 +164,14 @@ void Player::OnCollide(CollisionInfo colInfo) {
 }
 
 void Player::CalcGravityAndJumpPower() {
-	mGravity = -((8 * maxJumpHeight) / (jumpDuration * jumpDuration));
-	mJumpPower = -(mGravity * (jumpDuration * jumpDuration)) * 0.5f;
+	//mGravity = -((8 * maxJumpHeight) / (jumpDuration * jumpDuration));
+	//mJumpPower = -(mGravity * (jumpDuration * jumpDuration)) * 0.5f;
+	 
+	// A more wise person calculated this better: https://www.youtube.com/watch?v=hG9SzQxaCm8
+	// Gravity is solved from the projectile motion formula, while jump power comes from a different
+	// formula used to calculate the velocity during a jump
+	mGravity = -(2 * maxJumpHeight) / (jumpDuration * jumpDuration);
+	mJumpPower = -mGravity * (jumpDuration);
 }
 
 glm::vec3 Player::GetMoveDirection() {
