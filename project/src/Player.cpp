@@ -120,7 +120,6 @@ void Player::LateUpdate(float deltaTime) {
 		mGrounded = false;
 	}
 
-	//Problems seems to be that player is inside ground when trying to jump
 	if (inputMgr->KeyReleased(Keyboard_Space) && mVelocity.y > 0) {
 		mVelocity.y *= variableJumpMult;
 	}

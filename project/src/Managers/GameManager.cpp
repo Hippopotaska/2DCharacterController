@@ -9,8 +9,6 @@
 #include <string>
 
 #include "Renderer.h"
-#include "CollisionManager.h"
-#include "InputManager.h"
 
 #include "Player.h"
 #include "Solid.h"
@@ -27,18 +25,20 @@ void GameManager::Init() {
 	mLevel = LoadLevel();
 }
 
-void GameManager::Update(float deltaTime) {
-	mDeltaTime = deltaTime;
+void GameManager::Update() {
+	mTime = (float)glfwGetTime();
+	mDeltaTime = mTime - mLastFrameTime;
+	mLastFrameTime = mTime;
 
 	InputManager::GetInstance()->Update();
 
-	mPlayerRef->Update(deltaTime);
+	mPlayerRef->Update(mDeltaTime);
 	for (size_t i = 0; i < mLevel.size(); i++) {
-		mLevel[i]->Update(deltaTime);
+		mLevel[i]->Update(mDeltaTime);
 	}
 
 	collisionMngr->CheckCollisions(mLevel);
-	mPlayerRef->LateUpdate(deltaTime);
+	mPlayerRef->LateUpdate(mDeltaTime);
 
 	Renderer::GetInstance()->MoveCamera(*mPlayerRef->transform->GetPosition());
 }

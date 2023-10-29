@@ -2,7 +2,10 @@
 
 #include <vector>
 
-class CollisionManager;
+#include "InputManager.h"
+#include "CollisionManager.h"
+#include "UIManager.h"
+
 class Player;
 class Solid;
 
@@ -16,7 +19,10 @@ private:
 	CollisionManager* collisionMngr;
 
 	float mMaxCollisionTestRange = 3500.f;
-	float mDeltaTime = 0.0f;
+
+	float mLastFrameTime = 0.f;
+	float mTime = 0.f;
+	float mDeltaTime = 0.f;
 
 	GameManager();
 
@@ -27,7 +33,7 @@ public:
 
 	void Init();
 
-	void Update(float deltaTime);
+	void Update();
 
 	static GameManager* GetInstance();
 

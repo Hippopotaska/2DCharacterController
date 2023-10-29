@@ -4,33 +4,14 @@
 
 #include <iostream>
 
-#include "Camera.h"
-#include "Renderer.h"
-
-#include "Managers/InputManager.h"
 #include "Managers/GameManager.h"
-#include "Managers/CollisionManager.h"
-#include "Managers/UIManager.h"
-
-#include "Player.h"
-#include "Solid.h"
-#include "Transform.h"
-
-// Move window stuff into a new class OR the game manager
-static struct WindowData {
-    GLFWwindow* window;
-    int width;
-    int height;
-    const char* name;
-    bool isOpen;
-} WindowData;
+#include "Renderer.h"
 
 int main(void) {
     /* Initialize the library */
     if (!glfwInit())
         return -1;
 
-    // Stuff relating to glfw should probably be moved into renderer class
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -41,18 +22,9 @@ int main(void) {
     WindowData.isOpen = true;
     WindowData.window = glfwCreateWindow(WindowData.width, WindowData.height, WindowData.name, NULL, NULL);
 
-    if (!WindowData.window) {
-        glfwTerminate();
-        return -1;
-    }
-
     /* Make the window's context current */
     glfwMakeContextCurrent(WindowData.window);
     glfwSwapInterval(1);
-
-    InputManager* inputMgr = inputMgr->GetInstance();
-    GameManager* gameMgr = gameMgr->GetInstance();
-    UIManager* uiMgr = uiMgr->GetInstance();
 
     // Initialize GLEW
     if (glewInit() != GLEW_OK)
@@ -60,53 +32,42 @@ int main(void) {
     else
         std::cout << "GLEW set up correctly" << std::endl;
 
+    Renderer* renderer = renderer->GetInstance();
+    renderer->Init();
+
+    InputManager* inputMgr = inputMgr->GetInstance();
+    GameManager* gameMgr = gameMgr->GetInstance();
+    UIManager* uiMgr = uiMgr->GetInstance();
+
+    if (!WindowData.window) {
+        glfwTerminate();
+        return -1;
+    }
+
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        // Create camera, Move this to Renderer
-        float mult = 250.f;
-        Camera* camera = camera->GetInstance();
-        camera->Init(-1.6f * mult, 1.6f * mult, -0.9f * mult, 0.9f * mult);
-
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-        Renderer* renderer = renderer->GetInstance();
-        renderer->Init(camera);
 
         gameMgr->Init();
         uiMgr->Init(gameMgr->GetPlayerRef(), WindowData.window);
 
-        // Move time stuff into the game manager, since it should work there normally
-        float lastFrameTime = 0.f;
-        float time = 0.f;
-        float delta = 0.f;
-
-        /* Loop until the user closes the window */
         while (WindowData.isOpen) {
-            // Get time stuff
-            time = (float)glfwGetTime();
-            delta = time - lastFrameTime;
-            lastFrameTime = time;
-
-            /* Poll for and process events */
             GLCall(glfwPollEvents());
-
-            renderer->Clear();
-            gameMgr->Update(delta);
 
             if (inputMgr->KeyPressed(Keyboard_Esc)) {
                 WindowData.isOpen = false;
             }
 
+            renderer->Clear();
+            gameMgr->Update();
             uiMgr->Update();
 
-            /* Swap front and back buffers */
             GLCall(glfwSwapBuffers(WindowData.window));
         }
     }
 
     uiMgr->Stop();
-
     glfwTerminate();
     return 0;
 }

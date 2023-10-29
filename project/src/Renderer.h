@@ -14,6 +14,14 @@
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
 
+static struct WindowData {
+    class GLFWwindow* window;
+    int width;
+    int height;
+    const char* name;
+    bool isOpen;
+} WindowData;
+
 class Renderer {
 private:
     Camera* mCamera;
@@ -30,7 +38,7 @@ private:
 public:
     static Renderer* GetInstance();
 
-    void Init(Camera* camera);
+    void Init();
 
     void Clear() const;
     void Draw(class Sprite& spr);

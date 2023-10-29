@@ -1,4 +1,9 @@
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
 #include "Renderer.h"
+#include "Camera.h"
+
 #include <iostream>
 
 #include "glm/gtc/matrix_transform.hpp"
@@ -35,8 +40,10 @@ Renderer* Renderer::GetInstance() {
     return mInstance;
 }
 
-void Renderer::Init(Camera* camera) {
-    mCamera = camera;
+void Renderer::Init() {
+    float mult = 250.f;
+    mCamera = mCamera->GetInstance();
+    mCamera->Init(-1.6f * mult, 1.6f * mult, -0.9f * mult, 0.9f * mult);
 }
 
 void Renderer::Clear() const {
