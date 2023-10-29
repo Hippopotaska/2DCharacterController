@@ -13,7 +13,7 @@ void CollisionManager::CheckCollisions(std::vector<Solid*> level) {
 	AABB* plColl = player->GetComponent<AABB>();
 	AABB* slColl = nullptr;
 	
-	glm::vec3 plVel = player->GetVelocity() * GameManager::GetInstance()->GetDeltaTime();
+	glm::vec3 plVel = player->GetVelocity();
 
 	for (size_t i = 0; i < level.size(); i++)
 	{
@@ -33,7 +33,7 @@ void CollisionManager::ResolveCollision(Solid* solid) {
 	AABB* a = player->GetComponent<AABB>();
 	AABB* b = solid->GetComponent<AABB>();
 
-	glm::vec3 plVel = player->GetVelocity() * GameManager::GetInstance()->GetDeltaTime();
+	glm::vec3 plVel = player->GetVelocity();
 
 	static const glm::vec2 faces[4] = {
 		glm::vec2(-1.0f, 0.0f), glm::vec2(1.0f, 0.0f),

@@ -109,7 +109,6 @@ void Player::Update(float deltaTime) {
 	GameObject::Update(deltaTime);
 }
 void Player::LateUpdate(float deltaTime) {
-	// Multiplying the velocity with delta AND Game scale for the CHANGE in position
 	auto inputMgr = InputManager::GetInstance();
 
 	if (mJumpBufferCounter > 0 && mCoyoteTimeCounter > 0) {
@@ -146,17 +145,17 @@ void Player::OnCollide(CollisionInfo colInfo) {
 				mGrounded = true;
 			}
 		}
-		fix.y = (colInfo.intersectionDepth * 0.2f);
+		fix.y = (colInfo.intersectionDepth * 0.35f);
 		fix.y *= colInfo.normal.y;
 
 		if (mVelocity.y <= 0 || colInfo.normal.y == -1)
-			mVelocity.y += mVelocity.y * -1;
+			mVelocity.y = 0;
 	}
 	else if (colInfo.normal.x != 0) { // Horizontal collision resolve
-		fix.x = (colInfo.intersectionDepth * 0.2f);
+		fix.x = (colInfo.intersectionDepth * 0.35f);
 		fix.x *= colInfo.normal.x;
 
-		mVelocity.x += mVelocity.x * -1;
+		mVelocity.x = 0;
 	}
 
 	*transform->GetPosition() += fix;
@@ -164,12 +163,6 @@ void Player::OnCollide(CollisionInfo colInfo) {
 }
 
 void Player::CalcGravityAndJumpPower() {
-	//mGravity = -((8 * maxJumpHeight) / (jumpDuration * jumpDuration));
-	//mJumpPower = -(mGravity * (jumpDuration * jumpDuration)) * 0.5f;
-	 
-	// A more wise person calculated this better: https://www.youtube.com/watch?v=hG9SzQxaCm8
-	// Gravity is solved from the projectile motion formula, while jump power comes from a different
-	// formula used to calculate the velocity during a jump
 	mGravity = -(2 * maxJumpHeight) / (jumpDuration * jumpDuration);
 	mJumpPower = -mGravity * (jumpDuration);
 }

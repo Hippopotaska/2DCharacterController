@@ -21,7 +21,7 @@ private:
 
 public:
 	float maxJumpHeight = 2.f;
-	float jumpDuration = 1.f;
+	float jumpDuration = 0.5f;
 
 	float coyoteTime = 0.15f;
 	float jumpBufferTime = 0.1f;
