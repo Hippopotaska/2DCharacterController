@@ -7,6 +7,7 @@ private:
 	inline static UIManager* mInstance;
 
 	Player* mPlayerRef;
+	bool mShowControls = false;
 
 	UIManager();
 

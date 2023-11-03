@@ -3,7 +3,11 @@
 #include <glm/glm.hpp>
 
 #include "UIManager.h"
+
+#include "GameManager.h"
 #include "Player.h"
+
+#include <iomanip>
 
 #include "thirdparty/imgui/imgui.h"
 #include "thirdparty/imgui/imgui_impl_glfw.h"
@@ -28,9 +32,17 @@ void UIManager::Update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	float fps = 0;
 	// ImGui window settings
 	ImGui::Begin("Character Settings");
 	ImGui::Text("Hello user!\nMovement values are represented in game units (1 unit = 100 pixels)\nTimers are in seconds.");
+	if (ImGui::Button("Controls"))
+		mShowControls = true;
+	ImGui::SameLine();
+	if (ImGui::Button("Reset player"))
+		mPlayerRef->ResetStats();
+	ImGui::SameLine();
+	ImGui::Text("FPS [%i]", (int)GameManager::GetInstance()->GetFPS());
 	ImGui::Spacing();
 
 	ImGui::Text("- Vertical Movement -");
@@ -51,6 +63,12 @@ void UIManager::Update() {
 	ImGui::SliderFloat("Air Control Multiplier", &mPlayerRef->airControlMult, 0.f, 1.f);
 
 	ImGui::End();
+
+	if (mShowControls) {
+		ImGui::Begin("Controls", &mShowControls);
+		ImGui::Text("Left: A\nRight: D\nJump: Space\nQuit Game: ESC");
+		ImGui::End();
+	}
 
 	// ImGui rendering things
 	ImGui::Render();

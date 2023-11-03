@@ -23,6 +23,8 @@ private:
 	float mLastFrameTime = 0.f;
 	float mTime = 0.f;
 	float mDeltaTime = 0.f;
+	float mFrames = 0.f;
+	float mFPS = 0.f;
 
 	GameManager();
 
@@ -39,6 +41,7 @@ public:
 
 	Player* GetPlayerRef();
 	inline float GetDeltaTime() { return mDeltaTime; }
+	inline float GetFPS() { return mFPS; }
 
 	GameManager(GameManager& other) = delete;
 	void operator=(const GameManager&) = delete;

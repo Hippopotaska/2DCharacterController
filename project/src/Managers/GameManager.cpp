@@ -29,6 +29,7 @@ void GameManager::Update() {
 	mTime = (float)glfwGetTime();
 	mDeltaTime = mTime - mLastFrameTime;
 	mLastFrameTime = mTime;
+	mFrames++;
 
 	InputManager::GetInstance()->Update();
 
@@ -41,6 +42,9 @@ void GameManager::Update() {
 	mPlayerRef->LateUpdate(mDeltaTime);
 
 	Renderer::GetInstance()->MoveCamera(*mPlayerRef->transform->GetPosition());
+
+	mFPS = mFrames / mDeltaTime;
+	mFrames = 0;
 }
 
 std::vector<Solid*> GameManager::LoadLevel() {

@@ -161,6 +161,27 @@ void Player::OnCollide(CollisionInfo colInfo) {
 	transform->Translate();
 }
 
+void Player::ResetStats() {
+	maxJumpHeight = 2.f;
+	jumpDuration = 0.5f;
+
+	coyoteTime = 0.15f;
+	jumpBufferTime = 0.1f;
+
+	maxFall = -6.f;
+
+	moveSpeed = 10.f;
+	maxMoveVelocity = 3.f;
+	friction = 15.f;
+	airFriction = 5.f;
+
+	airControlMult = 0.85f;
+	variableJumpMult = 0.65f;
+
+	CalcGravityAndJumpPower();
+
+	transform->SetPosition(glm::vec3(0.0f));
+}
 void Player::CalcGravityAndJumpPower() {
 	mGravity = -(2 * maxJumpHeight) / (jumpDuration * jumpDuration);
 	mJumpPower = -mGravity * (jumpDuration);

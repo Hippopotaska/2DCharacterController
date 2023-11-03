@@ -45,6 +45,7 @@ public:
 
 	void OnCollide(struct CollisionInfo colInfo);
 
+	void ResetStats();
 	void CalcGravityAndJumpPower();
 
 	glm::vec3 GetMoveDirection();
