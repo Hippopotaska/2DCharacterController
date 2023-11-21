@@ -9,6 +9,7 @@ Projekti hyödyntää CMakea projektin tiedostojen buildaamiseen. Projektin CMak
 ## Kuinka käyttää
 Projekti hyödyntää ImGuia kääyttöliittymän luomiseen. Käyttöliittymässä voidaan muokata pelaajan liikkumisarvoja, kuten liikkumisnopeutta ja hyppykorkeutta. Kättöliittymässä näkee myös muuta informaatiota, kuten pelin kuvataajuuden ja mittayksiköt. Viimeisenä käyttöliittymästä löytyy kaksi nappia; "Controls"
 josta aukeaa pieni menu jossa näkee kontrollit ja "Reset Player" joka siirtää pelaajan aloituspisteeseen ja palauttaa liikkumisarvot lähtöarvoihin.
+Linkki videoon: https://youtu.be/OEdC8Xg6t5I
 
 # 
 # 
@@ -25,3 +26,4 @@ Project uses CMake to build the project files, as there is no executable file. C
 ## How to use
 Project uses ImGui to create an UI from which players attributes, such as movement speed and jump height can be modified. The UI also provides info, such as the framerate and measurement information. Finally the UI has two buttons; "Controls" button opens a menu which shows the controls and "Reset Player" moves player
 back to the start and resets the player attributes.
+Link to a video: https://youtu.be/OEdC8Xg6t5I
